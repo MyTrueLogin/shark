@@ -122,6 +122,8 @@ def convert(page, modules):
         html = html.replace('<div id="map-timeline" class="mt-4 mb-3 px-2">', '<div id="map-timeline" class="mt-5 mb-3 px-2">', 1)
 
     if page == 'single-location':
+        # Блок «Trends» (згортуваний) прибрано; trends.js пропускає його, якщо #trends-block немає
+        html = re.sub(r'\n\s*<section id="trends-block".*?</section>', '', html, count=1, flags=re.S)
         # Nearest / All Competitors: кольори статусів (як у Leaderboard і на карті) замість відтінків синього,
         # а кругова діаграма — живий графік Chart.js (src/js/competitors.js) замість PNG
         for swatch, col in (('#0B2A45', '#074B34'), ('#0F5F9E', '#047857'), ('#1296DB', '#059669'),
