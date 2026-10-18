@@ -14,11 +14,11 @@ var FLAT = { bg: '#EEF1F4', fg: '#506A7F', ring: 'rgba(80,106,127,0.35)' };
 var LINE_COLORS = ['#005E9D', '#3FA0E0', '#8FB8D6', '#C08A2E', '#7A8FA0'];
 var FJK = "font-family:'Plus Jakarta Sans',sans-serif;", RUB = 'font-family:Rubik,sans-serif;';
 
-function pts(d) { var n = Math.abs(Math.round(d)); return n + (n === 1 ? ' pt' : ' pts'); }
+function pts(d) { return String(Math.abs(Math.round(d))); }
 var METRICS = {
   performance: { label: 'Performance', unit: '%', fmt: function (v) { return Math.round(v) + '%'; }, dfmt: pts, up: true },
   reputation: { label: 'Reputation', unit: '%', fmt: function (v) { return Math.round(v) + '%'; }, dfmt: pts, up: true },
-  rank: { label: 'Market position', fmt: function (v) { return '#' + Math.round(v); }, dfmt: function (d) { return Math.abs(Math.round(d)) + (Math.abs(Math.round(d)) === 1 ? ' place' : ' places'); }, up: false },
+  rank: { label: 'Market position', fmt: function (v) { return '#' + Math.round(v); }, dfmt: function (d) { return String(Math.abs(Math.round(d))); }, up: false },
   rating: { label: 'Rating', fmt: function (v) { return v.toFixed(1); }, dfmt: function (d) { return Math.abs(d).toFixed(1); }, up: true },
   reviews: { label: 'Reviews', fmt: function (v) { return String(Math.round(v)); }, dfmt: function (d) { return String(Math.abs(Math.round(d))); }, up: true }
 };
@@ -107,9 +107,10 @@ function chip(c, m, p, size) {
   b.type = 'button';
   b.setAttribute('aria-label', METRICS[m].label + ' change over ' + PERIODS[p].label + ', open trend');
   b.title = 'vs ' + PERIODS[p].label + ' ago · open trend';
-  b.style.cssText = 'display:inline-flex;align-items:center;gap:3px;flex-shrink:0;border:0;cursor:pointer;border-radius:999px;' + RUB + 'font-weight:500;line-height:1;white-space:nowrap;transition:box-shadow .15s;background:' + t.bg + ';color:' + t.fg + ';' + (sm ? 'height:20px;padding:0 6px;font-size:11px;' : 'height:24px;padding:0 8px;font-size:13px;');
+  // no change — no indicator (hidden, so callers can still place it)
+  b.style.cssText = (flat ? 'display:none;' : 'display:inline-flex;') + 'align-items:center;gap:3px;flex-shrink:0;border:0;cursor:pointer;border-radius:999px;' + RUB + 'font-weight:500;line-height:1;white-space:nowrap;transition:box-shadow .15s;background:' + t.bg + ';color:' + t.fg + ';' + (sm ? 'height:20px;padding:0 6px;font-size:11px;' : 'height:24px;padding:0 8px;font-size:13px;');
   var up = m === 'rank' ? d < 0 : d > 0;
-  b.innerHTML = (flat ? '<span style="font-size:' + (sm ? 11 : 13) + 'px">±</span>' : (up ? ARROW_UP : ARROW_DN)) + '<span>' + (flat ? '0' : METRICS[m].dfmt(d)) + '</span>';
+  b.innerHTML = (up ? ARROW_UP : ARROW_DN) + '<span>' + METRICS[m].dfmt(d) + '</span>';
   b.onmouseenter = function () { b.style.boxShadow = 'inset 0 0 0 1.2px ' + t.ring; };
   b.onmouseleave = function () { b.style.boxShadow = 'none'; };
   b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); open(m, c.isYou ? null : c); };

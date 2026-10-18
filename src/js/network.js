@@ -48,9 +48,11 @@ function badge(st, small) { return '<span style="display:inline-flex;align-items
 var UP = '<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1.5 9 7.5H1z" fill="currentColor"/></svg>';
 var CAL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
 var DN = '<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 8.5 1 2.5h8z" fill="currentColor"/></svg>';
-function chipHtml(d, unit) {
-  var t = d > 0 ? GOOD : d < 0 ? BAD : FLAT;
-  return '<span style="display:inline-flex;align-items:center;gap:3px;height:22px;padding:0 7px;border-radius:999px;' + RUB + 'font-size:12px;font-weight:500;line-height:1;white-space:nowrap;background:' + t.bg + ';color:' + t.fg + '">' + (d > 0 ? UP : d < 0 ? DN : '±') + Math.abs(d) + (unit || '') + '</span>';
+// change chip: arrow + number, no units; nothing when there is no change
+function chipHtml(d) {
+  if (!d) return '';
+  var t = d > 0 ? GOOD : BAD;
+  return '<span style="display:inline-flex;align-items:center;gap:3px;height:22px;padding:0 7px;border-radius:999px;' + RUB + 'font-size:12px;font-weight:500;line-height:1;white-space:nowrap;background:' + t.bg + ';color:' + t.fg + '">' + (d > 0 ? UP : DN) + Math.abs(d) + '</span>';
 }
 
 // ---------- status changes ----------
@@ -85,7 +87,7 @@ function renderSC() {
   if (!moved.length) h += '<p style="margin:0;font-size:13px;color:' + C.muted + '">No location changed its category in this period.</p>';
   moved.forEach(function (l) {
     var d = l.perf[NOW] - l.perf[i], isUp = ch.up.indexOf(l) >= 0;
-    h += '<button type="button" data-loc="' + LOCS.indexOf(l) + '" style="display:grid;grid-template-columns:18px minmax(0,1fr) auto auto;align-items:center;gap:10px;width:100%;border:0;border-top:1px solid ' + C.line + ';background:transparent;padding:10px 4px;text-align:left;cursor:pointer;font-family:Inter,sans-serif;font-size:14px;color:' + C.navy + '"><span style="color:' + (isUp ? GOOD.fg : BAD.fg) + ';display:flex">' + (isUp ? UP : DN) + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + l.name + ' <span style="color:' + C.muted + ';font-size:12px">· ' + l.st + '</span></span><span style="display:flex;align-items:center;gap:6px">' + badge(l.hist[i], 1) + '<span style="color:' + C.muted + '">→</span>' + badge(l.hist[NOW], 1) + '</span>' + chipHtml(d, ' pts') + '</button>';
+    h += '<button type="button" data-loc="' + LOCS.indexOf(l) + '" style="display:grid;grid-template-columns:18px minmax(0,1fr) auto auto;align-items:center;gap:10px;width:100%;border:0;border-top:1px solid ' + C.line + ';background:transparent;padding:10px 4px;text-align:left;cursor:pointer;font-family:Inter,sans-serif;font-size:14px;color:' + C.navy + '"><span style="color:' + (isUp ? GOOD.fg : BAD.fg) + ';display:flex">' + (isUp ? UP : DN) + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + l.name + ' <span style="color:' + C.muted + ';font-size:12px">· ' + l.st + '</span></span><span style="display:flex;align-items:center;gap:6px">' + badge(l.hist[i], 1) + '<span style="color:' + C.muted + '">→</span>' + badge(l.hist[NOW], 1) + '</span>' + chipHtml(d) + '</button>';
   });
   h += '</div></div>';
   sc.innerHTML = h;
@@ -286,7 +288,7 @@ function paintLeaderboard() {
   document.querySelectorAll('#location-leaderboard tbody tr[role="link"]').forEach(function (tr) {
     var nm = (tr.children[1].querySelector('a') || {}).textContent || '';
     var l = LOCS.filter(function (x) { return nm.trim() === x.name || nm.trim() === CLIENT + ' - ' + x.name; })[0];
-    if (!l) return;
+    if (!l || l.perf[NOW] === l.perf[PERIOD]) return; // no change — no chip
     var cell = tr.children[2], v = cell.querySelector('span');
     var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;align-items:center;gap:8px';
     cell.insertBefore(wrap, v); wrap.appendChild(v);
@@ -294,7 +296,7 @@ function paintLeaderboard() {
     b.setAttribute('aria-label', 'Performance change since ' + STOPS[PERIOD].label + ', open trend');
     b.title = 'vs ' + STOPS[PERIOD].label + ' · open trend';
     b.style.cssText = 'border:0;padding:0;background:transparent;cursor:pointer;border-radius:999px;transition:box-shadow .15s';
-    b.innerHTML = chipHtml(l.perf[NOW] - l.perf[PERIOD], ' pts');
+    b.innerHTML = chipHtml(l.perf[NOW] - l.perf[PERIOD]);
     b.onmouseenter = function () { b.style.boxShadow = '0 0 0 1.2px rgba(7,44,74,0.25)'; };
     b.onmouseleave = function () { b.style.boxShadow = 'none'; };
     b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); openChart(l); };
@@ -333,7 +335,7 @@ function renderM() {
   var avg = weekly({ name: 'avg', perf: STOPS.map(function (_, k) { return Math.round(LOCS.reduce(function (a, x) { return a + x.perf[k]; }, 0) / LOCS.length); }) }, from);
   var d = l.perf[NOW] - l.perf[startIdx];
   var h = '<h2 style="' + FJK + 'margin:0 0 4px;font-size:24px;font-weight:700;letter-spacing:-0.014em;padding-right:48px">' + l.name + '</h2><p style="margin:0 0 18px;font-size:14px;color:' + C.muted + '">' + (STATE_NAMES[l.st] || l.st) + ' · Performance over time</p>';
-  h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px"><div style="display:flex;align-items:flex-end;gap:10px"><span style="' + RUB + 'font-size:44px;font-weight:600;line-height:1">' + l.perf[NOW] + '%</span><span style="padding-bottom:6px">' + chipHtml(d, ' pts') + '</span><span style="padding-bottom:8px;font-size:13px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span></div>' + seg(KEYS.map(function (k) { return [k, STOPS[k].label.replace(/ ago$/, '')]; }).reverse(), startIdx, 'data-mp') + '</div>';
+  h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px"><div style="display:flex;align-items:flex-end;gap:10px"><span style="' + RUB + 'font-size:44px;font-weight:600;line-height:1">' + l.perf[NOW] + '%</span><span style="padding-bottom:6px">' + chipHtml(d) + '</span><span style="padding-bottom:8px;font-size:13px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span></div>' + seg(KEYS.map(function (k) { return [k, STOPS[k].label.replace(/ ago$/, '')]; }).reverse(), startIdx, 'data-mp') + '</div>';
   h += '<div style="position:relative;height:260px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:16px 16px 8px"><canvas aria-label="Performance chart" role="img"></canvas></div>';
   h += '<div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 22px;font-size:12px;color:' + C.muted + '"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;border-radius:2px;background:' + C.navy + '"></span>' + l.name + '</span><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed #9AB0C2"></span>Network average</span></div>';
   h += '<h3 style="' + FJK + 'margin:0 0 10px;font-size:16px;font-weight:700">Status history</h3><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">' + STOPS.map(function (st, k) { return (k ? '<span style="color:' + C.muted + '">→</span>' : '') + '<span style="display:flex;flex-direction:column;gap:4px;align-items:flex-start"><span style="font-size:11px;color:' + C.muted + '">' + st.label + '</span>' + badge(l.hist[k]) + '</span>'; }).join('') + '</div>';

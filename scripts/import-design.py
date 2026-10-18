@@ -104,6 +104,12 @@ def convert(page, modules):
                 lambda m, st=st: m.group(1) + '\n                <a href="#location-leaderboard" data-view-status="' + st + '" class="group/vl absolute bottom-4 left-4 flex h-[26px] cursor-pointer items-center gap-0.5 rounded-lg bg-[#F0F8FF] px-2 no-underline shadow-[inset_0_0_0_0.8px_rgba(0,94,157,0.25)] transition-shadow hover:shadow-[inset_0_0_0_1px_rgba(0,94,157,0.5)]"><span class="text-[12px] font-medium text-[#072C4A]/85 group-hover/vl:text-[#005E9D]">View locations</span><i class="dc-icon i-chevron-right text-[#072C4A]/85 transition-transform group-hover/vl:translate-x-0.5 group-hover/vl:text-[#005E9D]" style="width:14px;height:14px"></i></a>',
                 html, count=1, flags=re.S)
 
+        # Примітка «#12 of 20 in local market» — кольором статусу локації (ті самі кольори, що й на карті)
+        def note_color(row):
+            st = re.search(r'text-\[#FAFAFA\] bg-\[(#[0-9A-Fa-f]{6})\]', row)
+            return re.sub(r'style="color:#[0-9A-Fa-f]{6}">#', 'style="color:' + st.group(1) + '">#', row) if st else row
+        html = re.sub(r'<tr\b.*?</tr>', lambda m: note_color(m.group(0)), html, flags=re.S)
+
         # Легенда карти (Strong / Average / Weak / Sleeping presence, No locations) — над картою, під таймлайном
         legend = re.search(r'\n\s*<div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">.*?</div>', html, flags=re.S)
         html = html.replace(legend.group(0), '', 1)
