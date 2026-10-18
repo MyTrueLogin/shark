@@ -131,8 +131,8 @@ def convert(page, modules):
         html = html.replace('<div id="map-timeline" class="mt-4 mb-3 px-2">', '<div id="map-timeline" class="mt-5 mb-3 px-2">', 1)
 
     if page == 'single-location':
-        # Підказка «i» на картці Performance показана одразу, без наведення (приклад для промо)
-        html = html.replace('data-info="performance"', 'data-info="performance" data-tip-pinned', 1)
+        # Підказка «i» біля Performance в шапці таблиці Market Leaderboard показана одразу, без наведення (приклад для промо)
+        html = html.replace('Performance<button type="button" data-info="performance"', 'Performance<button type="button" data-info="performance" data-tip-pinned', 1)
         # Rank placement: лишаємо варіант A (Same row, wraps) — без перемикача й без варіантів B/C
         html = re.sub(r'\n\s*<div id="rank-var-switch"[^\n]*', '', html, count=1)
         html = re.sub(r'\n\s*<div data-rank-var="[bc]"[^\n]*', '', html)
