@@ -28,7 +28,8 @@ src/styles/main.css    Tailwind 4 + шрифти, палітра, базові �
 src/styles/icons.css   класи іконок .i-<name> (генерується)
 src/icons/*.svg        іконки (монохромні, колір = currentColor)
 src/js/info-tips.js    підказки «i», модалка «More», автопідказки на бейджах
-src/js/trends.js       Single Location: чіпи змін, блок і модалка Trends
+src/js/trends.js       Single Location: чіпи змін і модалка Trends
+src/js/competitors.js  Single Location: кругові діаграми Nearest / All Competitors (Chart.js)
 src/js/network.js      All Locations: Status changes, карта (d3), таймлайн, тренд локації
 src/js/metrics.js      Metrics: рендер таблиці з JSON
 src/js/chart.js        лінива підвантажка Chart.js

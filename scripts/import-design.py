@@ -104,6 +104,10 @@ def convert(page, modules):
                             '<span title="Locations tracked" class="inline-flex h-[34px] min-w-[34px] items-center justify-center rounded-lg bg-[#F0F8FF] px-2 text-[18px] font-medium tracking-normal text-[#005E9D] shadow-[inset_0_0_0_1px_rgba(0,94,157,0.2)]">'
                             + total + '</span>All Locations</h1>', 1)
 
+        # Без рядка з кількістю картки нижчі: контент закінчується на ~175 px, панель 199 px + футер
+        html = html.replace('<article class="relative h-[271px] ', '<article class="relative h-[235px] ')
+        html = html.replace('top-0 z-3 h-[235px] ', 'top-0 z-3 h-[199px] ')
+
         # Примітка «#12 of 20 in local market» — кольором статусу локації (ті самі кольори, що й на карті)
         def note_color(row):
             st = re.search(r'text-\[#FAFAFA\] bg-\[(#[0-9A-Fa-f]{6})\]', row)
