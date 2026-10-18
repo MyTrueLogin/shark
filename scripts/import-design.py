@@ -37,7 +37,7 @@ ICONS = {
 
 PAGES = {
     'all-locations': ['info-tips', 'network'],
-    'single-location': ['info-tips', 'trends', 'rank-switch'],
+    'single-location': ['info-tips', 'trends', 'rank-switch', 'competitors'],
     'metrics': ['metrics'],
     'onboarding': [],
 }
@@ -116,6 +116,17 @@ def convert(page, modules):
         html = html.replace('<div id="map-timeline" class="mt-4 mb-5 px-2"></div>',
                             '<div id="map-timeline" class="mt-4 mb-3 px-2"></div>'
                             + legend.group(0).replace('px-6 pb-5 pt-1', 'px-2 pb-4'), 1)
+
+    if page == 'single-location':
+        # Nearest / All Competitors: кольори статусів (як у Leaderboard і на карті) замість відтінків синього,
+        # а кругова діаграма — живий графік Chart.js (src/js/competitors.js) замість PNG
+        for swatch, col in (('#0B2A45', '#074B34'), ('#0F5F9E', '#047857'), ('#1296DB', '#059669'),
+                            ('#7EC8F7', '#F59E0B'), ('#C8E7FC', '#F87171'), ('#E6F3FE', '#9A9A9A')):
+            html = re.sub(r'<div class="h-\[26px\] w-\[26px\] shrink-0 rounded-\[4px\] border border-\[#005E9D\]/50 bg-\[' + swatch + r'\]"></div>(.*?)<div class="h-full rounded-full bg-\[#005E9D\]" style="',
+                          lambda m, col=col: '<div data-swatch class="h-[26px] w-[26px] shrink-0 rounded-[4px]" style="background:' + col + '"></div>' + m.group(1) + '<div class="h-full rounded-full" style="background:' + col + ';',
+                          html, flags=re.S)
+        html = re.sub(r'<img src="assets/img/donut-(nearest|tracking)\.png" alt="([^"]+)" class="absolute inset-0 block h-full w-full">',
+                      r'<canvas data-donut="\1" role="img" aria-label="\2" class="absolute inset-0 block h-full w-full"></canvas>', html)
 
     # Підказки «i» — усі одного вигляду (варіант «corner» для Reputation більше не потрібен)
     html = html.replace(' data-tip="corner"', '')
