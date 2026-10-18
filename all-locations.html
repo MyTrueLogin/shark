@@ -102,7 +102,8 @@
               <span class="inline-flex items-center gap-2 text-[12px] font-medium text-[#072C4A]/70"><span class="h-2.5 w-2.5 rounded-full bg-[#9A9A9A]"></span>Sleeping presence</span>
               <span class="inline-flex items-center gap-2 text-[12px] font-medium text-[#072C4A]/70"><span class="h-2.5 w-2.5 rounded-full bg-[#E5E9ED]"></span>No locations</span>
             </div>
-              <div class="relative w-full">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-stretch">
+              <div class="relative min-w-0 flex-1">
                 <div id="map-root" class="relative w-full overflow-hidden" style="aspect-ratio:975/610;max-height:700px"></div>
                 <div class="absolute bottom-3 right-3 z-2 flex flex-col gap-1.5">
                   <button type="button" aria-label="Zoom in" class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[4px] border-[0.8px] border-[#005E9D]/20 bg-white p-0 text-[#2B4B64] transition-colors hover:border-[#005E9D]/45 hover:bg-[#F0F8FF]">
@@ -112,6 +113,8 @@
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 7H13"></path></svg>
                   </button>
                 </div>
+              </div>
+              <aside id="state-overview" aria-live="polite" class="w-full shrink-0 rounded-2xl bg-white p-6 shadow-[inset_0_0_0_1px_rgba(0,94,157,0.12),0px_2px_8px_rgba(7,44,74,0.06)] lg:w-[300px]"></aside>
               </div>
             </div>
           </section>

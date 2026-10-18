@@ -117,6 +117,13 @@ def convert(page, modules):
         # Map Tracker: без заголовка, підзаголовка і кнопки Filter — блок починається одразу з таймлайну
         html = re.sub(r'\n\s*<div class="flex flex-col gap-3 px-6 pt-5 pb-3 sm:flex-row sm:items-start sm:justify-between">\s*<div>\s*<h2[^>]*>Map Tracker</h2>.*?<span>Filter</span></div>\s*</div>\s*</div>', '', html, count=1, flags=re.S)
 
+        # Карта + бокова панель «State overview» (кругова діаграма як на Single Location; заповнює network.js)
+        html = re.sub(r'(<div class="relative w-full">\s*<div id="map-root".*?</button>\s*</div>\s*</div>)',
+                      lambda m: '<div class="flex flex-col gap-4 lg:flex-row lg:items-stretch">\n              '
+                      + m.group(1).replace('<div class="relative w-full">', '<div class="relative min-w-0 flex-1">', 1)
+                      + '\n              <aside id="state-overview" aria-live="polite" class="w-full shrink-0 rounded-2xl bg-white p-6 shadow-[inset_0_0_0_1px_rgba(0,94,157,0.12),0px_2px_8px_rgba(7,44,74,0.06)] lg:w-[300px]"></aside>\n              </div>',
+                      html, count=1, flags=re.S)
+
         # Легенда карти (Strong / Average / Weak / Sleeping presence, No locations) — над картою, під таймлайном
         legend = re.search(r'\n\s*<div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">.*?</div>', html, flags=re.S)
         html = html.replace(legend.group(0), '', 1)

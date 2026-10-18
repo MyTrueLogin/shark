@@ -227,6 +227,7 @@ function renderTimeline() {
 function clampN(v, a, b) { return Math.max(a, Math.min(b, v)); }
 function setMap(i) { mapIdx = i; renderTimeline(); paintMap(); }
 function paintMap() {
+  renderOverview();
   if (!statePaths) return;
   statePaths.attr('fill', function (d) { var ab = NAME_TO_ABBR[d.properties.name]; var st = ab && bestIn(ab, mapIdx); return st ? COL[st] : NONE; });
   // state code inside the shape: white on a status colour, muted navy on «No locations»
@@ -290,15 +291,66 @@ function drawMap(d3, topojson, us) {
   }
   statePaths.on('mousemove', function (e, d) {
     var ab = NAME_TO_ABBR[d.properties.name], ls = LOCS.filter(function (l) { return l.st === ab; });
-    d3.select(this).attr('stroke', C.navy).attr('stroke-width', 1.5).raise();
+    d3.select(this).attr('stroke', C.navy).attr('stroke-width', 2).raise();
+    if (hoverAb !== ab) { hoverAb = ab; renderOverview(); }
     showPop(e, '<div style="' + FJK + 'font-size:13px;font-weight:700;margin-bottom:' + (ls.length ? 6 : 0) + 'px">' + d.properties.name + ' — ' + (ls.length ? ls.length + (ls.length === 1 ? ' location' : ' locations') : '<span style="font-weight:400;color:' + C.muted + '">no locations</span>') + '</div>' + ls.map(locRow).join(''));
-  }).on('mouseleave', function () { d3.select(this).attr('stroke', '#fff').attr('stroke-width', 1); pop.style.display = 'none'; });
+  }).on('mouseleave', function () { d3.select(this).attr('stroke', '#fff').attr('stroke-width', 1); pop.style.display = 'none'; hoverAb = null; renderOverview(); })
+    .on('click', function (e, d) { var ab = NAME_TO_ABBR[d.properties.name]; pinAb = pinAb === ab ? null : ab; renderOverview(); });
+  statePaths.style('cursor', 'pointer');
   var zoom = d3.zoom().scaleExtent([1, 6]).translateExtent([[0, 0], [W, H]]).on('zoom', function (e) { g.attr('transform', e.transform); });
   svg.call(zoom).on('wheel.zoom', null);
   var zi = document.querySelector('[aria-label="Zoom in"]'), zo = document.querySelector('[aria-label="Zoom out"]');
   if (zi) zi.onclick = function () { svg.transition().duration(250).call(zoom.scaleBy, 1.6); };
   if (zo) zo.onclick = function () { svg.transition().duration(250).call(zoom.scaleBy, 1 / 1.6); };
   paintMap();
+}
+
+// ---------- state overview (panel to the right of the map) ----------
+// Hovering a state previews it, a click pins it (a second click un-pins); otherwise the whole network is shown.
+// Statuses are taken at the selected timeline point (mapIdx), like the map colours.
+var ov = document.getElementById('state-overview'), ovChart = null, hoverAb = null, pinAb = null;
+var ST_KEYS = ['strong', 'average', 'weak', 'sleeping'];
+function renderOverview() {
+  if (!ov) return;
+  var ab = hoverAb || pinAb, ls = LOCS.filter(function (l) { return !ab || l.st === ab; });
+  var counts = ST_KEYS.map(function (k) { return ls.filter(function (l) { return l.hist[mapIdx] === k; }).length; }), total = ls.length;
+  if (!ov.firstChild) {
+    ov.innerHTML = '<div data-ov-kicker style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:' + C.muted + '"></div>' +
+      '<div data-ov-title style="' + FJK + 'margin-top:6px;font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-0.02em;color:' + C.navy + '"></div>' +
+      '<div style="position:relative;height:210px;margin:18px 0 6px"><canvas data-ov-donut role="img"></canvas></div>' +
+      '<div style="border-top:1.5px dashed ' + C.line + ';margin:14px 0 4px"></div><div data-ov-list></div>' +
+      '<div data-ov-hint style="margin-top:10px;font-size:12px;color:' + C.muted + '"></div>';
+  }
+  ov.querySelector('[data-ov-kicker]').textContent = ab ? 'State overview' : 'Network overview';
+  ov.querySelector('[data-ov-title]').textContent = ab ? (STATE_NAMES[ab] || ab) : 'All states';
+  ov.querySelector('[data-ov-hint]').textContent = pinAb ? 'Pinned · click the state again to reset' : 'Hover a state to preview, click to pin';
+  ov.querySelector('[data-ov-list]').innerHTML = ST_KEYS.map(function (k, i) {
+    var pct = total ? Math.round(counts[i] / total * 100) : 0;
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0"><span style="width:14px;height:14px;border-radius:999px;flex-shrink:0;background:' + COL[k] + '"></span>' +
+      '<span style="flex:1;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:' + C.muted + '">' + LBL[k] + '</span>' +
+      '<span style="' + RUB + 'font-size:22px;font-weight:600;color:' + C.navy + '">' + counts[i] + '</span><span style="' + RUB + 'min-width:44px;text-align:right;font-size:13px;color:' + C.muted + '">(' + pct + '%)</span></div>';
+  }).join('');
+  var canvas = ov.querySelector('[data-ov-donut]');
+  canvas.setAttribute('aria-label', (ab ? STATE_NAMES[ab] : 'All states') + ': ' + total + ' locations');
+  var data = total ? counts : [1], colors = total ? ST_KEYS.map(function (k) { return COL[k]; }) : [NONE];
+  if (ovChart) { ovChart.$total = total; ovChart.data.datasets[0].data = data; ovChart.data.datasets[0].backgroundColor = colors; ovChart.update(); return; }
+  loadChart().then(function (Chart) {
+    if (ovChart) return;
+    ovChart = new Chart(canvas, {
+      type: 'doughnut',
+      data: { labels: ST_KEYS.map(function (k) { return LBL[k]; }), datasets: [{ data: data, backgroundColor: colors, borderColor: '#fff', borderWidth: 2, hoverOffset: 6 }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '62%', layout: { padding: 6 }, plugins: { legend: { display: false }, tooltip: { enabled: false } } },
+      plugins: [{ id: 'centerTotal', afterDraw: function (c) {
+        var a = c.chartArea, x = (a.left + a.right) / 2, y = (a.top + a.bottom) / 2, ctx = c.ctx;
+        ctx.save(); ctx.textAlign = 'center'; ctx.fillStyle = C.navy; ctx.font = '600 34px Rubik, sans-serif'; ctx.textBaseline = 'alphabetic'; ctx.fillText(String(c.$total), x, y + 6);
+        ctx.font = '600 10px Inter, sans-serif'; ctx.fillStyle = C.muted; ctx.textBaseline = 'top';
+        if ('letterSpacing' in ctx) ctx.letterSpacing = '2px';
+        ctx.fillText('LOCATIONS', x, y + 14); ctx.restore();
+      } }],
+    });
+    ovChart.$total = total; ovChart.update('none');
+    renderOverview();
+  });
 }
 
 // ---------- leaderboard performance chips ----------
