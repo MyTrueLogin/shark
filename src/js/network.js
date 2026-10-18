@@ -248,6 +248,8 @@ function drawMap(d3, topojson, us) {
   var path = d3.geoPath();
   statePaths = g.append('g').selectAll('path').data(states).join('path').attr('d', path).attr('stroke', '#fff').attr('stroke-width', 1).attr('fill', NONE).style('cursor', 'default').style('transition', 'fill .3s');
   g.append('path').datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; })).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 1).attr('d', path).style('pointer-events', 'none');
+  // hover outline: its own path above the white borders, so the whole stroke is visible (blue, round joins)
+  var hl = g.append('path').attr('fill', 'none').attr('stroke', C.blue).attr('stroke-width', 2).attr('stroke-linejoin', 'round').style('pointer-events', 'none').style('display', 'none');
   // State codes; small north-east states get a navy callout to the right (VT above) with a leader line
   var CALLOUT = { VT: [0, -34], NH: [52, -8], MA: [44, 0], RI: [36, 8], CT: [48, 22], NJ: [44, 4], DE: [40, 6], MD: [58, 22] };
   var lg = g.append('g').style('pointer-events', 'none').attr('font-family', 'Inter, sans-serif').attr('font-weight', 600).attr('text-anchor', 'middle').attr('dominant-baseline', 'central');
@@ -291,10 +293,10 @@ function drawMap(d3, topojson, us) {
   }
   statePaths.on('mousemove', function (e, d) {
     var ab = NAME_TO_ABBR[d.properties.name], ls = LOCS.filter(function (l) { return l.st === ab; });
-    d3.select(this).attr('stroke', C.navy).attr('stroke-width', 2).raise();
+    hl.attr('d', path(d)).style('display', null);
     if (hoverAb !== ab) { hoverAb = ab; renderOverview(); }
     showPop(e, '<div style="' + FJK + 'font-size:13px;font-weight:700;margin-bottom:' + (ls.length ? 6 : 0) + 'px">' + d.properties.name + ' — ' + (ls.length ? ls.length + (ls.length === 1 ? ' location' : ' locations') : '<span style="font-weight:400;color:' + C.muted + '">no locations</span>') + '</div>' + ls.map(locRow).join(''));
-  }).on('mouseleave', function () { d3.select(this).attr('stroke', '#fff').attr('stroke-width', 1); pop.style.display = 'none'; hoverAb = null; renderOverview(); })
+  }).on('mouseleave', function () { hl.style('display', 'none'); pop.style.display = 'none'; hoverAb = null; renderOverview(); })
     .on('click', function (e, d) { var ab = NAME_TO_ABBR[d.properties.name]; pinAb = pinAb === ab ? null : ab; renderOverview(); });
   statePaths.style('cursor', 'pointer');
   var zoom = d3.zoom().scaleExtent([1, 6]).translateExtent([[0, 0], [W, H]]).on('zoom', function (e) { g.attr('transform', e.transform); });
