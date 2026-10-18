@@ -110,12 +110,16 @@ def convert(page, modules):
             return re.sub(r'style="color:#[0-9A-Fa-f]{6}">#', 'style="color:' + st.group(1) + '">#', row) if st else row
         html = re.sub(r'<tr\b.*?</tr>', lambda m: note_color(m.group(0)), html, flags=re.S)
 
+        # Map Tracker: без заголовка, підзаголовка і кнопки Filter — блок починається одразу з таймлайну
+        html = re.sub(r'\n\s*<div class="flex flex-col gap-3 px-6 pt-5 pb-3 sm:flex-row sm:items-start sm:justify-between">\s*<div>\s*<h2[^>]*>Map Tracker</h2>.*?<span>Filter</span></div>\s*</div>\s*</div>', '', html, count=1, flags=re.S)
+
         # Легенда карти (Strong / Average / Weak / Sleeping presence, No locations) — над картою, під таймлайном
         legend = re.search(r'\n\s*<div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">.*?</div>', html, flags=re.S)
         html = html.replace(legend.group(0), '', 1)
         html = html.replace('<div id="map-timeline" class="mt-4 mb-5 px-2"></div>',
                             '<div id="map-timeline" class="mt-4 mb-3 px-2"></div>'
                             + legend.group(0).replace('px-6 pb-5 pt-1', 'px-2 pb-4'), 1)
+        html = html.replace('<div id="map-timeline" class="mt-4 mb-3 px-2">', '<div id="map-timeline" class="mt-5 mb-3 px-2">', 1)
 
     if page == 'single-location':
         # Nearest / All Competitors: кольори статусів (як у Leaderboard і на карті) замість відтінків синього,
