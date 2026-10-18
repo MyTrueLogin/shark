@@ -95,14 +95,14 @@ def convert(page, modules):
                             'rounded-2xl bg-[#B9E3FE] shadow-[inset_0_0_0_1.3px_rgba(7,44,74,0.25)]">', 1)
         html = html.replace('text-[#072C4A]">Strong</span><button type="button" data-info="strong"',
                             'text-[#072C4A]">Strong Presence</span><button type="button" data-info="strong"', 1)
-        # Картки статусів: кнопка «View locations» (веде до Internal Leaderboard), картки на 36 px вищі
-        html = html.replace('<article class="relative h-[271px] ', '<article class="relative h-[307px] ')
-        html = html.replace('top-0 z-3 h-[235px] ', 'top-0 z-3 h-[271px] ')
-        for st in ('strong', 'average', 'weak', 'sleeping'):
-            html = re.sub(
-                r'(<div data-card="' + st + r'".*?<span class="absolute left-4 top-\[190px\][^>]*>[^<]*</span>)',
-                lambda m, st=st: m.group(1) + '\n                <a href="#location-leaderboard" data-view-status="' + st + '" class="group/vl absolute bottom-4 left-4 flex h-[26px] cursor-pointer items-center gap-0.5 rounded-lg bg-[#F0F8FF] px-2 no-underline shadow-[inset_0_0_0_0.8px_rgba(0,94,157,0.25)] transition-shadow hover:shadow-[inset_0_0_0_1px_rgba(0,94,157,0.5)]"><span class="text-[12px] font-medium text-[#072C4A]/85 group-hover/vl:text-[#005E9D]">View locations</span><i class="dc-icon i-chevron-right text-[#072C4A]/85 transition-transform group-hover/vl:translate-x-0.5 group-hover/vl:text-[#005E9D]" style="width:14px;height:14px"></i></a>',
-                html, count=1, flags=re.S)
+        # Картки статусів: без «N of 14 locations · N states» (і без кнопки «View locations»);
+        # загальна кількість локацій — квадратиком перед заголовком «All Locations»
+        total = re.search(r'\d+ of (\d+) locations · \d+ states', html).group(1)
+        html = re.sub(r'\n\s*<span class="absolute left-4 top-\[190px\][^>]*>\d+ of \d+ locations · \d+ states</span>', '', html)
+        html = html.replace('<h1 class="frub text-[32px] font-semibold tracking-[-0.03em] text-[#072C4A]">All Locations</h1>',
+                            '<h1 class="frub flex items-center gap-3 text-[32px] font-semibold tracking-[-0.03em] text-[#072C4A]">'
+                            '<span title="Locations tracked" class="inline-flex h-[34px] min-w-[34px] items-center justify-center rounded-lg bg-[#F0F8FF] px-2 text-[18px] font-medium tracking-normal text-[#005E9D] shadow-[inset_0_0_0_1px_rgba(0,94,157,0.2)]">'
+                            + total + '</span>All Locations</h1>', 1)
 
         # Примітка «#12 of 20 in local market» — кольором статусу локації (ті самі кольори, що й на карті)
         def note_color(row):
