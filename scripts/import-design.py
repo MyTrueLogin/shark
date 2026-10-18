@@ -87,6 +87,10 @@ def convert(page, modules):
     html = re.sub(r'href="\.\./([\w-]+)/\1\.html', r'href="\1.html', html)
     html = re.sub(r'(src|href)="assets/(?!img/)', r'\1="assets/img/', html)
 
+    if page == 'all-locations':
+        # Блок «Status changes» поки прибрано (network.js пропускає його, якщо #status-changes немає)
+        html = re.sub(r'\s*<section id="status-changes"[^>]*></section>', '', html)
+
     if page == 'onboarding':
         html = re.sub(r'<body( class=")?', lambda m: '<body class="page-onboarding ' if m.group(1) else '<body class="page-onboarding"', html, count=1)
 

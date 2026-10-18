@@ -1,4 +1,4 @@
-// All Locations: Status changes, «Compare with» period bar, card change chips, US map with timeline,
+// All Locations: Status changes (if #status-changes is on the page), «Compare with» period bar, card change chips, US map with timeline,
 // leaderboard change chips and the per-location trend modal.
 // Data contract: see docs/NETWORK-DATA.md. Pass data either via
 //   <script type="application/json" id="network-data">…</script>  or  window.SharkNetwork.setData(data)
