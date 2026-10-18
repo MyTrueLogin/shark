@@ -29,3 +29,16 @@ with weekly stops the step is one week). Drag a point, click the track (the near
 or focus a point and use the arrow keys. The chips show how many locations improved / declined from start to end;
 the map shows the market on the point moved last. Clicking a date in the header opens a date picker for that point
 (the date snaps to the nearest stop). Default — the whole range.
+
+## Local market in the location modal
+
+The Performance modal (chip in Internal Leaderboard) shows a «Local market» block: position, competitors
+behind, standing (top N%) and the change in position over the chart period. Pass it per location:
+
+```json
+{ "name": "Seattle", "market": { "size": 21, "rank": [14, 14, 13, ..., 11] } }
+```
+
+`rank` has the same length as `performance` (one value per stop, oldest → today). Without `market`
+the current place is read from the leaderboard note («#11 of 21 in local market») and the history is
+estimated from Performance (demo only).

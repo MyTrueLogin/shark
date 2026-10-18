@@ -35,7 +35,8 @@ function setData(data) {
   if (PERIOD === null || PERIOD >= NOW || !STOPS[PERIOD].key) { PERIOD = KEYS[0]; KEYS.forEach(function (k) { if (Math.abs(STOPS[k].days - 30) < Math.abs(STOPS[PERIOD].days - 30)) PERIOD = k; }); }
   LOCS = data.locations.map(function (r) {
     var perf = r.performance.map(Number);
-    return { name: r.name, st: r.state, ll: [+r.lat, +r.lon], perf: perf, hist: perf.map(function (p, k) { return toStatus(r.status && r.status[k], p); }) };
+    return { name: r.name, st: r.state, ll: [+r.lat, +r.lon], perf: perf, hist: perf.map(function (p, k) { return toStatus(r.status && r.status[k], p); }),
+      mk: r.market && r.market.rank ? { size: +r.market.size, rank: r.market.rank.map(Number) } : null };
   });
 }
 var rank = function (x) { return ST.indexOf(x); };
@@ -392,6 +393,34 @@ function weekly(l, from) {
   if (out[out.length - 1].d !== 0) out.push({ d: 0, v: l.perf[NOW] });
   return out;
 }
+// Local market of a location: { size, rank[] per stop, href }. From data.locations[].market
+// ({ size, rank: [...] } — same length as performance) when present; otherwise the current place is read
+// from the leaderboard note («#11 of 21 in local market») and the history is estimated from Performance (demo).
+function marketOf(l) {
+  var row = [].filter.call(document.querySelectorAll('#location-leaderboard tbody tr[role="link"]'), function (tr) {
+    var a = tr.children[1] && tr.children[1].querySelector('a'), nm = a ? a.textContent.trim() : '';
+    return nm === l.name || nm === CLIENT + ' - ' + l.name;
+  })[0];
+  var note = row && [].filter.call(row.querySelectorAll('a'), function (a) { return /in local market/.test(a.textContent); })[0];
+  var href = note ? note.getAttribute('href') : null;
+  if (l.mk) return { size: l.mk.size, rank: l.mk.rank, href: href };
+  var m = note && note.textContent.match(/#(\d+) of (\d+)/);
+  if (!m) return null;
+  var now = +m[1], size = +m[2], est = function (p) { return 1 + (1 - p / 100) * (size - 1); }, off = now - est(l.perf[NOW]);
+  return { size: size, href: href, rank: l.perf.map(function (p, k) { return k === NOW ? now : Math.max(1, Math.min(size, Math.round(est(p) + off))); }) };
+}
+function marketHtml(l, startIdx) {
+  var mk = marketOf(l); if (!mk) return '';
+  var now = mk.rank[NOW], then = mk.rank[startIdx], ahead = mk.size - now, top = Math.max(1, Math.round(now / mk.size * 100));
+  var tile = function (label, value, extra) { return '<div style="flex:1 1 160px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:12px 14px"><div style="font-size:12px;color:' + C.muted + '">' + label + '</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px"><span style="' + RUB + 'font-size:26px;font-weight:600;line-height:1.1">' + value + '</span>' + (extra || '') + '</div></div>'; };
+  return '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px"><h3 style="' + FJK + 'margin:0;font-size:16px;font-weight:700">Local market</h3>' +
+    (mk.href ? '<a href="' + mk.href + '" style="font-size:12px;font-weight:600;color:' + C.blue + ';text-decoration:none">Open local market →</a>' : '') + '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px">' +
+    tile('Position', '#' + now + '<span style="font-size:15px;font-weight:500;color:' + C.muted + '"> of ' + mk.size + '</span>', chipHtml(then - now) + (then !== now ? '<span style="font-size:11px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span>' : '')) +
+    tile('Ahead of', String(ahead), '<span style="font-size:13px;color:' + C.muted + '">' + (ahead === 1 ? 'competitor' : 'competitors') + '</span>') +
+    tile('Standing', 'Top ' + top + '%', '<span style="font-size:13px;color:' + C.muted + '">of ' + mk.size + ' businesses</span>') +
+    '</div>';
+}
 function fmt(d) { var x = new Date(TODAY); x.setDate(x.getDate() + d); return x.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 var modal = document.createElement('div');
 modal.style.cssText = 'position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(7,44,74,0.4);padding:16px';
@@ -415,6 +444,7 @@ function renderM() {
   h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px"><div style="display:flex;align-items:flex-end;gap:10px"><span style="' + RUB + 'font-size:44px;font-weight:600;line-height:1">' + l.perf[NOW] + '%</span><span style="padding-bottom:6px">' + chipHtml(d) + '</span><span style="padding-bottom:8px;font-size:13px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span></div>' + seg(MK.map(function (k) { return [k, STOPS[k].label.replace(/ ago$/, '')]; }).reverse(), startIdx, 'data-mp') + '</div>';
   h += '<div style="position:relative;height:260px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:16px 16px 8px"><canvas aria-label="Performance chart" role="img"></canvas></div>';
   h += '<div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 22px;font-size:12px;color:' + C.muted + '"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;border-radius:2px;background:' + C.navy + '"></span>' + l.name + '</span><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed #9AB0C2"></span>Network average</span></div>';
+  h += marketHtml(l, startIdx);
   h += '<h3 style="' + FJK + 'margin:0 0 10px;font-size:16px;font-weight:700">Status history</h3><p style="margin:-6px 0 10px;font-size:12px;color:' + C.muted + '">' + STOPS[startIdx].date + ' → ' + STOPS[NOW].date + ', the period shown on the chart</p><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">' + STOPS.slice(startIdx, NOW + 1).map(function (st, j) { var k = startIdx + j; return (j ? '<span style="color:' + C.muted + '">→</span>' : '') + '<span style="display:flex;flex-direction:column;gap:4px;align-items:flex-start"><span style="font-size:11px;color:' + C.muted + '">' + st.label + '</span>' + badge(l.hist[k]) + '</span>'; }).join('') + '</div>';
   mscroll.innerHTML = h;
   mscroll.querySelectorAll('[data-mp]').forEach(function (b) { b.onclick = function () { mState.k = +b.dataset.mp; renderM(); }; });
