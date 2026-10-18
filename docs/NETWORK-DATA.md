@@ -21,3 +21,9 @@ All Locations builds Status changes, the map timeline, map colours and the leade
 - **status** — optional, one per stop: 0 strong, 1 average, 2 weak, 3 sleeping (or the strings). If omitted it is derived from performance via `thresholds`.
 - **state** — two-letter US code, colours the map.
 - **client** — prefix used to match leaderboard rows ("BBJ La Tavola - Seattle").
+
+## Map timeline period
+
+Above the timeline the user picks the period: two dates (`Period … → …`) or presets 1M / 3M / 6M / 1Y (ending today).
+Dates snap to the nearest stop, so with weekly stops the period moves in weeks. The map, the scrubber and the
+"By <end>: N improved / N declined" chips work inside the chosen period. Default — the whole range of `stops`.
