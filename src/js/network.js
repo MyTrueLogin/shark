@@ -401,16 +401,19 @@ modal.querySelector('[data-close]').onclick = closeM;
 modal.addEventListener('click', function (e) { if (e.target === modal) closeM(); });
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeM(); });
 function openChart(l) { mState.l = l; mState.k = PERIOD; modal.style.display = 'flex'; renderM(); }
+// periods in the modal: the page presets without «1 week» (too short for a trend line)
+function mKeys() { var ks = KEYS.filter(function (k) { return STOPS[k].days > 7; }); return ks.length ? ks : KEYS; }
 function renderM() {
-  if (mState.k === null || mState.k >= NOW) mState.k = PERIOD;
+  var MK = mKeys();
+  if (mState.k === null || mState.k >= NOW || MK.indexOf(mState.k) < 0) mState.k = MK.indexOf(PERIOD) >= 0 ? PERIOD : MK[MK.length - 1];
   var l = mState.l, startIdx = mState.k, from = -STOPS[startIdx].days, pts = weekly(l, from);
   var avg = weekly({ name: 'avg', perf: STOPS.map(function (_, k) { return Math.round(LOCS.reduce(function (a, x) { return a + x.perf[k]; }, 0) / LOCS.length); }) }, from);
   var d = l.perf[NOW] - l.perf[startIdx];
   var h = '<h2 style="' + FJK + 'margin:0 0 4px;font-size:24px;font-weight:700;letter-spacing:-0.014em;padding-right:48px">' + l.name + '</h2><p style="margin:0 0 18px;font-size:14px;color:' + C.muted + '">' + (STATE_NAMES[l.st] || l.st) + ' · Performance over time</p>';
-  h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px"><div style="display:flex;align-items:flex-end;gap:10px"><span style="' + RUB + 'font-size:44px;font-weight:600;line-height:1">' + l.perf[NOW] + '%</span><span style="padding-bottom:6px">' + chipHtml(d) + '</span><span style="padding-bottom:8px;font-size:13px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span></div>' + seg(KEYS.map(function (k) { return [k, STOPS[k].label.replace(/ ago$/, '')]; }).reverse(), startIdx, 'data-mp') + '</div>';
+  h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px"><div style="display:flex;align-items:flex-end;gap:10px"><span style="' + RUB + 'font-size:44px;font-weight:600;line-height:1">' + l.perf[NOW] + '%</span><span style="padding-bottom:6px">' + chipHtml(d) + '</span><span style="padding-bottom:8px;font-size:13px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span></div>' + seg(MK.map(function (k) { return [k, STOPS[k].label.replace(/ ago$/, '')]; }).reverse(), startIdx, 'data-mp') + '</div>';
   h += '<div style="position:relative;height:260px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:16px 16px 8px"><canvas aria-label="Performance chart" role="img"></canvas></div>';
   h += '<div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 22px;font-size:12px;color:' + C.muted + '"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;border-radius:2px;background:' + C.navy + '"></span>' + l.name + '</span><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed #9AB0C2"></span>Network average</span></div>';
-  h += '<h3 style="' + FJK + 'margin:0 0 10px;font-size:16px;font-weight:700">Status history</h3><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">' + STOPS.map(function (st, k) { return (k ? '<span style="color:' + C.muted + '">→</span>' : '') + '<span style="display:flex;flex-direction:column;gap:4px;align-items:flex-start"><span style="font-size:11px;color:' + C.muted + '">' + st.label + '</span>' + badge(l.hist[k]) + '</span>'; }).join('') + '</div>';
+  h += '<h3 style="' + FJK + 'margin:0 0 10px;font-size:16px;font-weight:700">Status history</h3><p style="margin:-6px 0 10px;font-size:12px;color:' + C.muted + '">' + STOPS[startIdx].date + ' → ' + STOPS[NOW].date + ', the period shown on the chart</p><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">' + STOPS.slice(startIdx, NOW + 1).map(function (st, j) { var k = startIdx + j; return (j ? '<span style="color:' + C.muted + '">→</span>' : '') + '<span style="display:flex;flex-direction:column;gap:4px;align-items:flex-start"><span style="font-size:11px;color:' + C.muted + '">' + st.label + '</span>' + badge(l.hist[k]) + '</span>'; }).join('') + '</div>';
   mscroll.innerHTML = h;
   mscroll.querySelectorAll('[data-mp]').forEach(function (b) { b.onclick = function () { mState.k = +b.dataset.mp; renderM(); }; });
   var cv = mscroll.querySelector('canvas');
