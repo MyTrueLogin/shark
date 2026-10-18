@@ -124,12 +124,10 @@ def convert(page, modules):
                       + '\n              <aside id="state-overview" aria-live="polite" class="w-full shrink-0 rounded-2xl bg-white p-6 shadow-[inset_0_0_0_1px_rgba(0,94,157,0.12),0px_2px_8px_rgba(7,44,74,0.06)] lg:w-[300px]"></aside>\n              </div>',
                       html, count=1, flags=re.S)
 
-        # Легенда карти (Strong / Average / Weak / Sleeping presence, No locations) — над картою, під таймлайном
-        legend = re.search(r'\n\s*<div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">.*?</div>', html, flags=re.S)
-        html = html.replace(legend.group(0), '', 1)
-        html = html.replace('<div id="map-timeline" class="mt-4 mb-5 px-2"></div>',
-                            '<div id="map-timeline" class="mt-4 mb-3 px-2"></div>'
-                            + legend.group(0).replace('px-6 pb-5 pt-1', 'px-2 pb-4'), 1)
+        # Легенда карти (Strong / Average / Weak / Sleeping presence, No locations) поки прихована —
+        # ті самі кольори видно в панелі «State overview» праворуч від карти
+        html = re.sub(r'\n\s*<div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">.*?</div>', '', html, count=1, flags=re.S)
+        html = html.replace('<div id="map-timeline" class="mt-4 mb-5 px-2"></div>', '<div id="map-timeline" class="mt-4 mb-3 px-2"></div>', 1)
         html = html.replace('<div id="map-timeline" class="mt-4 mb-3 px-2">', '<div id="map-timeline" class="mt-5 mb-3 px-2">', 1)
 
     if page == 'single-location':
