@@ -90,6 +90,12 @@ def convert(page, modules):
     if page == 'all-locations':
         # Блок «Status changes» поки прибрано (network.js пропускає його, якщо #status-changes немає)
         html = re.sub(r'\s*<section id="status-changes"[^>]*></section>', '', html)
+        # Легенда карти (Strong / Average / Weak / Sleeping presence, No locations) — над картою, під таймлайном
+        legend = re.search(r'\n\s*<div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">.*?</div>', html, flags=re.S)
+        html = html.replace(legend.group(0), '', 1)
+        html = html.replace('<div id="map-timeline" class="mt-4 mb-5 px-2"></div>',
+                            '<div id="map-timeline" class="mt-4 mb-3 px-2"></div>'
+                            + legend.group(0).replace('px-6 pb-5 pt-1', 'px-2 pb-4'), 1)
 
     if page == 'onboarding':
         html = re.sub(r'<body( class=")?', lambda m: '<body class="page-onboarding ' if m.group(1) else '<body class="page-onboarding"', html, count=1)

@@ -1,5 +1,5 @@
 // All Locations: Status changes (if #status-changes is on the page), «Compare with» period bar, card change chips,
-// US map with a timeline over a chosen period (dates or 1M/3M/6M/1Y presets),
+// US map with a timeline where two draggable points set the compared period,
 // leaderboard change chips and the per-location trend modal.
 // Data contract: see docs/NETWORK-DATA.md. Pass data either via
 //   <script type="application/json" id="network-data">…</script>  or  window.SharkNetwork.setData(data)
@@ -120,95 +120,86 @@ var mapIdx = 0, statePaths = null;
 function bestIn(abbr, i) {
   var b = null; LOCS.forEach(function (l) { if (l.st === abbr && (b === null || rank(l.hist[i]) < rank(b))) b = l.hist[i]; }); return b;
 }
-// Timeline period: indices into STOPS (A = start, B = end). The user can set it with dates or presets.
+// Timeline period: two points on the track (A = start, B = end, indices into STOPS), both draggable.
+// The map shows the market at the point moved last (mapIdx); the chips compare A with B.
 var rangeA = 0, rangeB = 0;
-var PRESETS = [[30, '1M'], [91, '3M'], [182, '6M'], [364, '1Y']];
-function isoOf(k) { var d = new Date(TODAY); d.setDate(d.getDate() - STOPS[k].days); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-function stopNear(iso) { var t = new Date(iso + 'T00:00:00'), days = Math.round((TODAY - t) / 864e5), best = 0; STOPS.forEach(function (s, k) { if (Math.abs(s.days - days) < Math.abs(STOPS[best].days - days)) best = k; }); return best; }
 function changesBetween(i, j) {
   var up = [], down = [];
   LOCS.forEach(function (l) { var a = rank(l.hist[i]), b = rank(l.hist[j]); if (b < a) up.push(l); else if (b > a) down.push(l); });
   return { up: up, down: down };
 }
-function setRange(a, b) {
-  rangeA = clampN(Math.min(a, b), 0, NOW); rangeB = clampN(Math.max(a, b), 0, NOW);
-  if (rangeA === rangeB) { if (rangeB < NOW) rangeB++; else rangeA = Math.max(0, rangeA - 1); }
-  mapIdx = rangeB; renderTimeline(); paintMap();
+function setPoint(which, k) {
+  if (which === 'a') rangeA = clampN(k, 0, rangeB - 1); else rangeB = clampN(k, rangeA + 1, NOW);
+  mapIdx = which === 'a' ? rangeA : rangeB;
+  renderTimeline(); paintMap();
 }
 function renderTimeline() {
   if (!tl) return;
-  var A = rangeA, B = rangeB, SPAN = Math.max(1, STOPS[A].days - STOPS[B].days);
-  var fr = function (k) { return (STOPS[A].days - STOPS[k].days) / SPAN; }, pos = function (k) { return (fr(k) * 100) + '%'; };
-  var ch = changesBetween(mapIdx, B), endName = B === NOW ? 'today' : STOPS[B].date;
-  var inp = 'height:32px;padding:0 8px;border:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.25);font-family:Inter,sans-serif;font-size:13px;color:' + C.navy;
-  // period row: dates + presets
-  var h = '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px">';
-  h += '<span style="font-size:13px;color:' + C.muted + '">Period</span>';
-  h += '<input type="date" data-from aria-label="Period start" min="' + isoOf(0) + '" max="' + isoOf(NOW) + '" value="' + isoOf(A) + '" style="' + inp + '">';
-  h += '<span style="color:' + C.muted + '">→</span>';
-  h += '<input type="date" data-to aria-label="Period end" min="' + isoOf(0) + '" max="' + isoOf(NOW) + '" value="' + isoOf(B) + '" style="' + inp + '">';
-  h += seg(PRESETS.map(function (p) { return [p[0], p[1]]; }), B === NOW ? (PRESETS.filter(function (p) { return stopNear(isoOfDays(p[0])) === A; })[0] || [])[0] : null, 'data-preset');
+  var A = rangeA, B = rangeB, SPAN = Math.max(1, STOPS[0].days - STOPS[NOW].days);
+  var fr = function (k) { return (STOPS[0].days - STOPS[k].days) / SPAN; }, pos = function (k) { return (fr(k) * 100) + '%'; };
+  var ch = changesBetween(A, B), active = mapIdx === A ? 'a' : 'b';
+  var dateBtn = function (k, which) { var on = which === active; return '<button type="button" data-pick="' + which + '" style="border:0;background:transparent;padding:0;cursor:pointer;' + FJK + 'font-size:16px;font-weight:700;color:' + (on ? C.navy : C.muted) + ';text-decoration:' + (on ? 'underline' : 'none') + ';text-underline-offset:4px">' + (k === NOW ? 'Today' : STOPS[k].date) + '</button>'; };
+  var h = '<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px">';
+  h += '<div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px"><span style="font-size:13px;color:' + C.muted + '">Market from</span>' + dateBtn(A, 'a') + '<span style="color:' + C.muted + '">→</span>' + dateBtn(B, 'b') + '</div>';
+  h += '<span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px"><span style="display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;background:' + GOOD.bg + ';color:' + GOOD.fg + ';font-weight:600;white-space:nowrap">' + UP + ch.up.length + ' improved</span><span style="display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;background:' + BAD.bg + ';color:' + BAD.fg + ';font-weight:600;white-space:nowrap">' + DN + ch.down.length + ' declined</span></span>';
   h += '</div>';
-  h += '<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px">';
-  h += '<div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:13px;color:' + C.muted + '">Market on</span><span style="' + FJK + 'font-size:16px;font-weight:700;color:' + C.navy + '">' + STOPS[mapIdx].date + '</span></div>';
-  h += mapIdx === B
-    ? '<span style="font-size:12px;color:' + C.muted + '">Pick an earlier date to compare with ' + endName + '</span>'
-    : '<span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px"><span style="color:' + C.muted + ';white-space:nowrap">By ' + endName + '</span><span style="display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;background:' + GOOD.bg + ';color:' + GOOD.fg + ';font-weight:600;white-space:nowrap">' + UP + ch.up.length + ' improved</span><span style="display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;background:' + BAD.bg + ';color:' + BAD.fg + ';font-weight:600;white-space:nowrap">' + DN + ch.down.length + ' declined</span></span>';
-  h += '</div>';
-  var ks = []; for (var k = A; k <= B; k++) ks.push(k);
-  var TH = 36, cnt = {}; ks.forEach(function (k) { cnt[k] = ST.map(function (st) { return LOCS.filter(function (l) { return l.hist[k] === st; }).length; }); });
+  var TH = 36, cnt = STOPS.map(function (_, k) { return ST.map(function (st) { return LOCS.filter(function (l) { return l.hist[k] === st; }).length; }); });
   var svg = '<svg viewBox="0 0 300 ' + TH + '" preserveAspectRatio="none" width="100%" height="' + TH + '" style="position:absolute;inset:0;display:block;border-radius:8px;overflow:hidden">';
   ST.slice().reverse().forEach(function (st) {
     var si = ST.indexOf(st), top = [], bot = [];
-    ks.forEach(function (k) {
-      var c = cnt[k], below = 0; for (var j = si + 1; j < ST.length; j++) below += c[j];
+    cnt.forEach(function (c, k) {
+      var below = 0; for (var j = si + 1; j < ST.length; j++) below += c[j];
       var x = fr(k) * 300;
       bot.push(x + ',' + (TH - below / LOCS.length * TH));
       top.push(x + ',' + (TH - (below + c[si]) / LOCS.length * TH));
     });
     svg += '<polygon points="' + top.join(' ') + ' ' + bot.reverse().join(' ') + '" fill="' + COL[st] + '"/>';
   });
-  if (mapIdx < B) svg += '<rect x="0" y="0" width="' + (fr(mapIdx) * 300) + '" height="' + TH + '" fill="#FAFAFA" fill-opacity="0.45"/><rect x="' + (fr(mapIdx) * 300) + '" y="0" width="' + ((1 - fr(mapIdx)) * 300) + '" height="' + TH + '" fill="none" stroke="' + C.navy + '" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>';
-  ks.slice(1, -1).forEach(function (k) { svg += '<line x1="' + (fr(k) * 300) + '" x2="' + (fr(k) * 300) + '" y1="0" y2="' + TH + '" stroke="#fff" stroke-opacity="0.7" stroke-width="1" vector-effect="non-scaling-stroke"/>'; });
+  // outside the period — faded; the period — dashed frame
+  svg += '<rect x="0" y="0" width="' + (fr(A) * 300) + '" height="' + TH + '" fill="#FAFAFA" fill-opacity="0.6"/><rect x="' + (fr(B) * 300) + '" y="0" width="' + ((1 - fr(B)) * 300) + '" height="' + TH + '" fill="#FAFAFA" fill-opacity="0.6"/>';
+  svg += '<rect x="' + (fr(A) * 300) + '" y="0" width="' + ((fr(B) - fr(A)) * 300) + '" height="' + TH + '" fill="none" stroke="' + C.navy + '" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>';
+  STOPS.slice(1, NOW).forEach(function (_, j) { var k = j + 1; svg += '<line x1="' + (fr(k) * 300) + '" x2="' + (fr(k) * 300) + '" y1="0" y2="' + TH + '" stroke="#fff" stroke-opacity="0.7" stroke-width="1" vector-effect="non-scaling-stroke"/>'; });
   svg += '</svg>';
-  var sel = cnt[mapIdx];
-  h += '<div data-track role="slider" tabindex="0" aria-label="Map date" aria-valuemin="' + A + '" aria-valuemax="' + B + '" aria-valuenow="' + mapIdx + '" aria-valuetext="' + STOPS[mapIdx].date + '" style="position:relative;height:' + TH + 'px;cursor:pointer;outline:none;touch-action:none">' + svg;
-  h += '<span style="position:absolute;left:' + pos(mapIdx) + ';top:-6px;bottom:-6px;width:3px;transform:translateX(-50%);border-radius:2px;background:' + C.navy + ';box-shadow:0 0 0 2px #fff;transition:left .2s"></span>';
-  h += '<span style="position:absolute;left:' + pos(mapIdx) + ';top:-10px;width:14px;height:14px;transform:translateX(-50%);border-radius:999px;background:' + C.navy + ';box-shadow:0 0 0 3px #fff,0 2px 6px rgba(7,44,74,0.3);transition:left .2s"></span>';
-  h += '</div>';
-  // captions: period ends + named stops inside the period
-  h += '<div style="position:relative;height:34px;margin:10px 0 0">';
-  var shown = [A], last = A; ks.forEach(function (k) { if (k === A || k === B || !STOPS[k].key) return; if (fr(k) - fr(last) >= 0.12 && 1 - fr(k) >= 0.12) { shown.push(k); last = k; } }); shown.push(B);
-  shown.forEach(function (k) {
-    var st = STOPS[k], on = k === mapIdx, edge = k === A ? 'start' : k === B ? 'end' : 'mid';
-    var al = edge === 'start' ? 'left:0;' : edge === 'end' ? 'right:0;' : 'left:' + pos(k) + ';transform:translateX(-50%);';
-    var title = edge === 'mid' ? st.label : k === NOW ? 'Today' : fmtStopDate(st.days, true);
-    var sub = edge === 'mid' || k === NOW ? fmtStopDate(st.days, false) : st.label;
-    h += '<button type="button" data-stop="' + k + '" style="position:absolute;' + al + 'top:0;display:flex;flex-direction:column;align-items:' + (edge === 'start' ? 'flex-start' : edge === 'end' ? 'flex-end' : 'center') + ';gap:1px;border:0;background:transparent;padding:0;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap"><span style="' + FJK + 'font-size:13px;font-weight:' + (on ? 700 : 500) + ';color:' + (on ? C.navy : C.muted) + '">' + title + '</span><span style="font-size:11px;color:' + C.muted + '">' + sub + '</span></button>';
+  h += '<div data-track role="group" aria-label="Map period" style="position:relative;height:' + TH + 'px;cursor:pointer;touch-action:none">' + svg;
+  [['a', A], ['b', B]].forEach(function (p) {
+    var on = p[0] === active;
+    h += '<span style="position:absolute;left:' + pos(p[1]) + ';top:-6px;bottom:-6px;width:3px;transform:translateX(-50%);border-radius:2px;background:' + C.navy + ';box-shadow:0 0 0 2px #fff;transition:left .2s;pointer-events:none"></span>';
+    h += '<span data-handle="' + p[0] + '" role="slider" tabindex="0" aria-label="' + (p[0] === 'a' ? 'Period start' : 'Period end') + '" aria-valuemin="0" aria-valuemax="' + NOW + '" aria-valuenow="' + p[1] + '" aria-valuetext="' + STOPS[p[1]].date + '" style="position:absolute;left:' + pos(p[1]) + ';top:-10px;width:14px;height:14px;transform:translateX(-50%);border-radius:999px;background:' + (on ? C.navy : '#fff') + ';box-shadow:0 0 0 2px ' + C.navy + ',0 0 0 4px #fff,0 2px 6px rgba(7,44,74,0.3);transition:left .2s;outline:none;cursor:grab"></span>';
   });
   h += '</div>';
-  h += '<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;font-size:11px;color:' + C.muted + '">' + ST.map(function (st, j) { return '<span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:' + COL[st] + '"></span>' + LBL[st] + ' <b style="' + RUB + 'font-weight:600;color:' + C.navy + '">' + sel[j] + '</b></span>'; }).join('') + '</div>';
+  h += '<div style="position:relative;height:34px;margin:10px 0 0">';
+  var shown = [], last = -1; STOPS.forEach(function (st, k) { if (!st.key) return; if (k === 0 || k === NOW || (fr(NOW) - fr(k) >= 0.06 && (last < 0 || fr(k) - fr(last) >= 0.1))) { shown.push(k); last = k; } });
+  shown.forEach(function (k) {
+    var st = STOPS[k], on = k === A || k === B, tight = k > 0 && k < NOW && fr(NOW) - fr(k) < 0.14, al = k === 0 ? 'left:0;' : k === NOW ? 'right:0;' : 'left:' + pos(k) + ';transform:translateX(' + (tight ? '-100%' : '-50%') + ');';
+    h += '<button type="button" data-stop="' + k + '" style="position:absolute;' + al + 'top:0;display:flex;flex-direction:column;align-items:' + (k === 0 ? 'flex-start' : k === NOW || tight ? 'flex-end' : 'center') + ';gap:1px;border:0;background:transparent;padding:0;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap"><span style="' + FJK + 'font-size:13px;font-weight:' + (on ? 700 : 500) + ';color:' + (on ? C.navy : C.muted) + '">' + st.label + '</span><span style="font-size:11px;color:' + C.muted + '">' + fmtStopDate(st.days, false) + '</span></button>';
+  });
+  h += '</div>';
   tl.innerHTML = h;
-  tl.querySelector('[data-from]').onchange = function (e) { if (e.target.value) setRange(stopNear(e.target.value), rangeB); };
-  tl.querySelector('[data-to]').onchange = function (e) { if (e.target.value) setRange(rangeA, stopNear(e.target.value)); };
-  tl.querySelectorAll('[data-preset]').forEach(function (b) { b.onclick = function () { setRange(stopNear(isoOfDays(+b.dataset.preset)), NOW); }; });
   var tr = tl.querySelector('[data-track]');
+  // the track is re-rendered while dragging, so the rect is measured once per gesture
+  var at = function (x, r) { var p = clampN((x - r.left) / r.width, 0, 1), best = 0; STOPS.forEach(function (_, k) { if (Math.abs(fr(k) - p) < Math.abs(fr(best) - p)) best = k; }); return best; };
+  // the nearer point follows the pointer; ties go to the end point
+  var nearer = function (k) { return Math.abs(k - rangeA) < Math.abs(k - rangeB) ? 'a' : 'b'; };
   tr.onpointerdown = function (e) {
     e.preventDefault();
-    var r = tr.getBoundingClientRect();
-    var at = function (x) { var p = clampN((x - r.left) / r.width, 0, 1), best = A; ks.forEach(function (k) { if (Math.abs(fr(k) - p) < Math.abs(fr(best) - p)) best = k; }); return best; };
-    var mv = function (ev) { var k = at(ev.clientX); if (k !== mapIdx) setMap(k); };
-    var up = function () { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); };
+    var r = tr.getBoundingClientRect(), h0 = e.target.closest('[data-handle]'), which = h0 ? h0.dataset.handle : nearer(at(e.clientX, r));
+    var mv = function (ev) { var k = at(ev.clientX, r); if (k !== (which === 'a' ? rangeA : rangeB)) setPoint(which, k); };
+    var up = function () { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); var f = tl.querySelector('[data-handle="' + which + '"]'); if (f) f.focus({ preventScroll: true }); };
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
     mv(e);
   };
-  tr.onkeydown = function (e) {
-    var k = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : 0;
-    if (k) { e.preventDefault(); setMap(clampN(mapIdx + k, A, B)); tl.querySelector('[data-track]').focus(); }
-  };
-  tl.querySelectorAll('[data-stop]').forEach(function (b) { b.onclick = function () { setMap(+b.dataset.stop); }; });
+  tl.querySelectorAll('[data-handle]').forEach(function (hd) {
+    hd.onkeydown = function (e) {
+      var d = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      var w = hd.dataset.handle; setPoint(w, (w === 'a' ? rangeA : rangeB) + d);
+      tl.querySelector('[data-handle="' + w + '"]').focus({ preventScroll: true });
+    };
+  });
+  tl.querySelectorAll('[data-pick]').forEach(function (b) { b.onclick = function () { mapIdx = b.dataset.pick === 'a' ? rangeA : rangeB; renderTimeline(); paintMap(); }; });
+  tl.querySelectorAll('[data-stop]').forEach(function (b) { b.onclick = function () { var k = +b.dataset.stop; setPoint(nearer(k), k); }; });
 }
-function isoOfDays(n) { var d = new Date(TODAY); d.setDate(d.getDate() - n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function clampN(v, a, b) { return Math.max(a, Math.min(b, v)); }
 function setMap(i) { mapIdx = i; renderTimeline(); paintMap(); }
 function paintMap() {
