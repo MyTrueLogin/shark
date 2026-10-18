@@ -220,6 +220,39 @@ document.querySelectorAll('span, th, div').forEach((el) => {
   for (const [rx, title, text] of HINT_RX) if (rx.test(t)) return attachHint(target, title, text)
 })
 
+// pinned tip: [data-info][data-tip-pinned] shows its tip right away, without hover (promo example),
+// with a pulsing ring on the «i» so it is clear the button is clickable; «More» opens the modal
+document.querySelectorAll('[data-info][data-tip-pinned]').forEach((btn) => {
+  const d = INFO[btn.dataset.info]
+  if (!d) return
+  const pin = tip.cloneNode(true)
+  pin.removeAttribute('id')
+  pin.style.position = 'absolute'
+  pin.style.zIndex = '40'
+  pin.style.display = 'block'
+  pin.querySelector('[data-t]').textContent = d.title
+  pin.querySelector('[data-s]').textContent = d.short
+  const pinArrow = pin.lastElementChild
+  pin.querySelector('[data-more]').addEventListener('click', (e) => { e.stopPropagation(); openModal(btn.dataset.info) })
+  document.body.appendChild(pin)
+  btn.style.borderRadius = '999px'
+  btn.animate([{ boxShadow: '0 0 0 0 rgba(0,94,157,0.45)' }, { boxShadow: '0 0 0 8px rgba(0,94,157,0)' }], { duration: 1600, iterations: Infinity })
+  // the pinned tip replaces the hover one for this button; a click still opens the modal
+  btn.addEventListener('mouseenter', () => setTimeout(hide), true)
+  btn.addEventListener('click', (e) => { e.stopImmediatePropagation(); e.preventDefault(); openModal(btn.dataset.info) }, true)
+  const placePin = () => {
+    const r = btn.getBoundingClientRect()
+    const left = Math.max(16, Math.min(r.left + r.width / 2 - 28, document.documentElement.clientWidth - 296))
+    pin.style.left = left + window.scrollX + 'px'
+    pin.style.top = r.bottom + 6 + window.scrollY + 'px'
+    pinArrow.style.left = Math.max(10, Math.min(r.left + r.width / 2 - left - 6, 258)) + 'px'
+    pinArrow.style.top = '-5px'
+  }
+  placePin()
+  window.addEventListener('resize', placePin)
+  window.addEventListener('load', placePin)
+})
+
 tip.addEventListener('mouseenter', () => clearTimeout(hideT))
 tip.addEventListener('mouseleave', hideSoon)
 tip.addEventListener('click', (e) => e.stopPropagation())
