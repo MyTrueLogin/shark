@@ -32,8 +32,10 @@ the map shows the market on the point moved last. Clicking a date in the header 
 
 ## Local market in the location modal
 
-The Performance modal (chip in Internal Leaderboard) shows a «Local market» block: position, competitors
-behind, standing (top N%) and the change in position over the chart period. Pass it per location:
+The trend modal has a «Performance | Local market» switch left of the period. «Local market» charts the
+position in the local market over the period (with competitors behind and top N%). Clicking the
+«#11 of 21 in local market» note in Internal Leaderboard opens the modal straight on «Local market».
+Pass the data per location:
 
 ```json
 { "name": "Seattle", "market": { "size": 21, "rank": [14, 14, 13, ..., 11] } }

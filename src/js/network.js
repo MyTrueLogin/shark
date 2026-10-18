@@ -364,6 +364,9 @@ function paintLeaderboard() {
   document.querySelectorAll('#location-leaderboard tbody tr[role="link"]').forEach(function (tr) {
     var nm = (tr.children[1].querySelector('a') || {}).textContent || '';
     var l = LOCS.filter(function (x) { return nm.trim() === x.name || nm.trim() === CLIENT + ' - ' + x.name; })[0];
+    if (!l) return;
+    var note = [].filter.call(tr.children[1].querySelectorAll('a'), function (a) { return /in local market/.test(a.textContent); })[0];
+    if (note && !note.$m) { note.$m = 1; note.title = 'Open position in the local market over time'; note.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openChart(l, 'market'); }); }
     if (!l || l.perf[NOW] === l.perf[PERIOD]) return; // no change — no chip
     var cell = tr.children[2], v = cell.querySelector('span');
     var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;align-items:center;gap:8px';
@@ -408,15 +411,15 @@ function placePin() {
 }
 
 // ---------- trend modal ----------
-function weekly(l, from) {
+function weekly(l, from, smooth) {
   var out = [], seed = 0; for (var c = 0; c < l.name.length; c++) seed += l.name.charCodeAt(c);
   var DAYS = STOPS.map(function (s) { return -s.days; }), step = Math.max(1, Math.round(-from / 26));
   if (NOW < 1) return [{ d: 0, v: l.perf[0] }];
   for (var d = from; d <= 0; d += step) {
     var k = 0; while (k < NOW - 1 && d > DAYS[k + 1]) k++;
     var t = (d - DAYS[k]) / Math.max(1, DAYS[k + 1] - DAYS[k]), v = l.perf[k] + (l.perf[k + 1] - l.perf[k]) * t;
-    var n = l.perf[NOW] === 0 && l.perf[0] === 0 ? 0 : Math.sin(d * 0.37 + seed) * 2.2 * Math.sin(Math.PI * t);
-    out.push({ d: d, v: Math.max(0, Math.min(100, Math.round(v + n))) });
+    var n = smooth || (l.perf[NOW] === 0 && l.perf[0] === 0) ? 0 : Math.sin(d * 0.37 + seed) * 2.2 * Math.sin(Math.PI * t);
+    out.push({ d: d, v: smooth ? Math.round(v) : Math.max(0, Math.min(100, Math.round(v + n))) });
   }
   if (out[out.length - 1].d !== 0) out.push({ d: 0, v: l.perf[NOW] });
   return out;
@@ -437,17 +440,12 @@ function marketOf(l) {
   var now = +m[1], size = +m[2], est = function (p) { return 1 + (1 - p / 100) * (size - 1); }, off = now - est(l.perf[NOW]);
   return { size: size, href: href, rank: l.perf.map(function (p, k) { return k === NOW ? now : Math.max(1, Math.min(size, Math.round(est(p) + off))); }) };
 }
-function marketHtml(l, startIdx) {
-  var mk = marketOf(l); if (!mk) return '';
-  var now = mk.rank[NOW], then = mk.rank[startIdx], ahead = mk.size - now, top = Math.max(1, Math.round(now / mk.size * 100));
-  var tile = function (label, value, extra) { return '<div style="flex:1 1 160px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:12px 14px"><div style="font-size:12px;color:' + C.muted + '">' + label + '</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px"><span style="' + RUB + 'font-size:26px;font-weight:600;line-height:1.1">' + value + '</span>' + (extra || '') + '</div></div>'; };
-  return '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 10px"><h3 style="' + FJK + 'margin:0;font-size:16px;font-weight:700">Local market</h3>' +
-    (mk.href ? '<a href="' + mk.href + '" style="font-size:12px;font-weight:600;color:' + C.blue + ';text-decoration:none">Open local market →</a>' : '') + '</div>' +
-    '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px">' +
-    tile('Position', '#' + now + '<span style="font-size:15px;font-weight:500;color:' + C.muted + '"> of ' + mk.size + '</span>', chipHtml(then - now) + (then !== now ? '<span style="font-size:11px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span>' : '')) +
-    tile('Ahead of', String(ahead), '<span style="font-size:13px;color:' + C.muted + '">' + (ahead === 1 ? 'competitor' : 'competitors') + '</span>') +
-    tile('Standing', 'Top ' + top + '%', '<span style="font-size:13px;color:' + C.muted + '">of ' + mk.size + ' businesses</span>') +
-    '</div>';
+function marketStats(mk) {
+  var now = mk.rank[NOW], ahead = mk.size - now, top = Math.max(1, Math.round(now / mk.size * 100));
+  return '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;margin:10px 0 22px;font-size:13px;color:' + C.muted + '">' +
+    '<span>Ahead of <b style="' + RUB + 'font-weight:600;color:' + C.navy + '">' + ahead + '</b> ' + (ahead === 1 ? 'competitor' : 'competitors') + '</span>' +
+    '<span>Top <b style="' + RUB + 'font-weight:600;color:' + C.navy + '">' + top + '%</b> of the local market</span>' +
+    (mk.href ? '<a href="' + mk.href + '" style="margin-left:auto;font-size:12px;font-weight:600;color:' + C.blue + ';text-decoration:none">Open local market →</a>' : '') + '</div>';
 }
 // Status history for the chart period: a strip coloured by status (width ∝ time) and only the moments
 // the status changed — compact for any period length.
@@ -484,39 +482,42 @@ function closeM() { modal.style.display = 'none'; }
 modal.querySelector('[data-close]').onclick = closeM;
 modal.addEventListener('click', function (e) { if (e.target === modal) closeM(); });
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeM(); });
-function openChart(l) { mState.l = l; mState.k = PERIOD; modal.style.display = 'flex'; renderM(); }
+// metric: 'perf' (Performance, %) or 'market' (position in the local market); the switch sits left of the period
+function openChart(l, metric) { mState.l = l; mState.k = PERIOD; mState.m = metric === 'market' && marketOf(l) ? 'market' : 'perf'; modal.style.display = 'flex'; renderM(); }
 // periods in the modal: the page presets without «1 week» (too short for a trend line)
 function mKeys() { var ks = KEYS.filter(function (k) { return STOPS[k].days > 7; }); return ks.length ? ks : KEYS; }
 function renderM() {
   var MK = mKeys();
   if (mState.k === null || mState.k >= NOW || MK.indexOf(mState.k) < 0) mState.k = MK.indexOf(PERIOD) >= 0 ? PERIOD : MK[MK.length - 1];
-  var l = mState.l, startIdx = mState.k, from = -STOPS[startIdx].days, pts = weekly(l, from);
-  var avg = weekly({ name: 'avg', perf: STOPS.map(function (_, k) { return Math.round(LOCS.reduce(function (a, x) { return a + x.perf[k]; }, 0) / LOCS.length); }) }, from);
-  var d = l.perf[NOW] - l.perf[startIdx];
-  var h = '<h2 style="' + FJK + 'margin:0 0 4px;font-size:24px;font-weight:700;letter-spacing:-0.014em;padding-right:48px">' + l.name + '</h2><p style="margin:0 0 18px;font-size:14px;color:' + C.muted + '">' + (STATE_NAMES[l.st] || l.st) + ' · Performance over time</p>';
-  h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px"><div style="display:flex;align-items:flex-end;gap:10px"><span style="' + RUB + 'font-size:44px;font-weight:600;line-height:1">' + l.perf[NOW] + '%</span><span style="padding-bottom:6px">' + chipHtml(d) + '</span><span style="padding-bottom:8px;font-size:13px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span></div>' + seg(MK.map(function (k) { return [k, STOPS[k].label.replace(/ ago$/, '')]; }).reverse(), startIdx, 'data-mp') + '</div>';
-  h += '<div style="position:relative;height:260px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:16px 16px 8px"><canvas aria-label="Performance chart" role="img"></canvas></div>';
-  h += '<div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 22px;font-size:12px;color:' + C.muted + '"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;border-radius:2px;background:' + C.navy + '"></span>' + l.name + '</span><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed #9AB0C2"></span>Network average</span></div>';
-  h += marketHtml(l, startIdx);
+  var l = mState.l, startIdx = mState.k, from = -STOPS[startIdx].days, mk = marketOf(l), isM = mState.m === 'market' && !!mk;
+  var pts = isM ? weekly({ name: l.name, perf: mk.rank }, from, true) : weekly(l, from);
+  var avg = isM ? null : weekly({ name: 'avg', perf: STOPS.map(function (_, k) { return Math.round(LOCS.reduce(function (a, x) { return a + x.perf[k]; }, 0) / LOCS.length); }) }, from);
+  var d = isM ? mk.rank[startIdx] - mk.rank[NOW] : l.perf[NOW] - l.perf[startIdx];
+  var big = isM ? '#' + mk.rank[NOW] + '<span style="font-size:22px;font-weight:500;color:' + C.muted + '"> of ' + mk.size + '</span>' : l.perf[NOW] + '%';
+  var h = '<h2 style="' + FJK + 'margin:0 0 4px;font-size:24px;font-weight:700;letter-spacing:-0.014em;padding-right:48px">' + l.name + '</h2><p style="margin:0 0 18px;font-size:14px;color:' + C.muted + '">' + (STATE_NAMES[l.st] || l.st) + ' · ' + (isM ? 'Position in the local market over time' : 'Performance over time') + '</p>';
+  h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px"><div style="display:flex;align-items:flex-end;gap:10px"><span style="' + RUB + 'font-size:44px;font-weight:600;line-height:1">' + big + '</span><span style="padding-bottom:6px">' + chipHtml(d) + '</span><span style="padding-bottom:8px;font-size:13px;color:' + C.muted + '">vs ' + STOPS[startIdx].date + '</span></div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:8px">' + (mk ? seg([['perf', 'Performance'], ['market', 'Local market']], isM ? 'market' : 'perf', 'data-mm') : '') + seg(MK.map(function (k) { return [k, STOPS[k].label.replace(/ ago$/, '')]; }).reverse(), startIdx, 'data-mp') + '</div></div>';
+  h += '<div style="position:relative;height:260px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:16px 16px 8px"><canvas aria-label="' + (isM ? 'Local market position chart' : 'Performance chart') + '" role="img"></canvas></div>';
+  h += isM ? marketStats(mk) : '<div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 22px;font-size:12px;color:' + C.muted + '"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;border-radius:2px;background:' + C.navy + '"></span>' + l.name + '</span><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed #9AB0C2"></span>Network average</span></div>';
   h += statusHistoryHtml(l, startIdx);
   mscroll.innerHTML = h;
   mscroll.querySelectorAll('[data-mp]').forEach(function (b) { b.onclick = function () { mState.k = +b.dataset.mp; renderM(); }; });
+  mscroll.querySelectorAll('[data-mm]').forEach(function (b) { b.onclick = function () { mState.m = b.dataset.mm; renderM(); }; });
   var cv = mscroll.querySelector('canvas');
+  var sets = [{ label: l.name, data: pts.map(function (p) { return p.v; }), borderColor: C.navy, backgroundColor: C.navy, borderWidth: 2.6, pointRadius: 0, pointHoverRadius: 4, tension: isM ? 0 : 0.3, stepped: isM ? 'middle' : false }];
+  if (avg) sets.push({ label: 'Network average', data: avg.map(function (p) { return p.v; }), borderColor: '#9AB0C2', backgroundColor: '#9AB0C2', borderWidth: 1.8, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 3, tension: 0.3 });
+  var y = isM
+    ? { reverse: true, min: 1, max: mk.size, grid: { color: C.line }, border: { display: false }, ticks: { color: C.muted, font: { family: 'Rubik', size: 11 }, precision: 0, maxTicksLimit: 6, callback: function (v) { return '#' + v; } } }
+    : { min: 0, max: 100, grid: { color: C.line }, border: { display: false }, ticks: { color: C.muted, font: { family: 'Rubik', size: 11 }, stepSize: 25, callback: function (v) { return v + '%'; } } };
   loadChart().then(function (Chart) {
     if (chart) chart.destroy();
     chart = new Chart(cv, {
       type: 'line',
-      data: { labels: pts.map(function (p) { return fmt(p.d); }), datasets: [
-        { label: l.name, data: pts.map(function (p) { return p.v; }), borderColor: C.navy, backgroundColor: C.navy, borderWidth: 2.6, pointRadius: 0, pointHoverRadius: 4, tension: 0.3 },
-        { label: 'Network average', data: avg.map(function (p) { return p.v; }), borderColor: '#9AB0C2', backgroundColor: '#9AB0C2', borderWidth: 1.8, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 3, tension: 0.3 }
-      ] },
+      data: { labels: pts.map(function (p) { return fmt(p.d); }), datasets: sets },
       options: {
         responsive: true, maintainAspectRatio: false, animation: { duration: 250 }, interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#fff', borderColor: 'rgba(0,94,157,0.18)', borderWidth: 1, titleColor: C.navy, bodyColor: C.navy, padding: 10, cornerRadius: 10, boxWidth: 10, boxHeight: 3, titleFont: { family: 'Plus Jakarta Sans', weight: '700', size: 12 }, bodyFont: { family: 'Inter', size: 12 }, callbacks: { label: function (c) { return ' ' + c.dataset.label + '   ' + c.parsed.y + '%'; } } } },
-        scales: {
-          x: { grid: { display: false }, border: { color: C.line }, ticks: { color: C.muted, font: { family: 'Inter', size: 11 }, maxRotation: 0, autoSkipPadding: 16 } },
-          y: { min: 0, max: 100, grid: { color: C.line }, border: { display: false }, ticks: { color: C.muted, font: { family: 'Rubik', size: 11 }, stepSize: 25, callback: function (v) { return v + '%'; } } }
-        }
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#fff', borderColor: 'rgba(0,94,157,0.18)', borderWidth: 1, titleColor: C.navy, bodyColor: C.navy, padding: 10, cornerRadius: 10, boxWidth: 10, boxHeight: 3, titleFont: { family: 'Plus Jakarta Sans', weight: '700', size: 12 }, bodyFont: { family: 'Inter', size: 12 }, callbacks: { label: function (c) { return ' ' + c.dataset.label + '   ' + (isM ? '#' + c.parsed.y + ' of ' + mk.size : c.parsed.y + '%'); } } } },
+        scales: { x: { grid: { display: false }, border: { color: C.line }, ticks: { color: C.muted, font: { family: 'Inter', size: 11 }, maxRotation: 0, autoSkipPadding: 16 } }, y: y }
       }
     });
   });
