@@ -66,11 +66,9 @@ design/export/         сирий експорт із Claude Design (джере�
 ## Автодеплой (GitHub Actions)
 
 `.github/workflows/deploy.yml`: на кожен push у `main` (або вручну: Actions → «Build & deploy» → Run workflow)
-— `npm ci`, `npm run build`, далі:
+— `npm ci`, `npm run build`, далі деплой:
 
-1. **GitHub Pages** — увімкнути один раз: **Settings → Pages → Build and deployment → Source: «GitHub Actions»**.
-   Сайт буде на `https://<owner>.github.io/shark/`.
-2. **Свій сервер (необов'язково)** — rsync `dist/` по SSH. Працює, лише коли задано секрет `SSH_HOST`.
+**Сервер** — rsync `dist/` по SSH. Працює, лише коли задано секрет `SSH_HOST`.
    **Settings → Secrets and variables → Actions**:
    - Secrets: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD` (пароль SSH-користувача), `DEPLOY_PATH` (абсолютний шлях до webroot,
      напр. `/var/www/shark`). Замість пароля можна задати `SSH_KEY` (приватний ключ) — тоді вхід за ключем.
