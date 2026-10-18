@@ -447,7 +447,29 @@ function marketStats(mk) {
     '<span>Top <b style="' + RUB + 'font-weight:600;color:' + C.navy + '">' + top + '%</b> of the local market</span>' +
     (mk.href ? '<a href="' + mk.href + '" style="margin-left:auto;font-size:12px;font-weight:600;color:' + C.blue + ';text-decoration:none">Open local market →</a>' : '') + '</div>';
 }
-// Status history for the chart period: a strip coloured by status (width ∝ time); hover a part for its dates.
+// Status history for the chart period: a strip coloured by status (width ∝ time); hovering a part shows
+// a tip with the status, its dates and duration, the Performance range and what the status means.
+var ST_MEANS = {
+  strong: 'Shows in the top Google Maps results across most of the area.',
+  average: 'Visible in parts of the area, but below the local leaders.',
+  weak: 'Shows in only a few parts of the area; nearby competitors rank above it.',
+  sleeping: 'Rarely or never appears in Google Maps for your keywords.',
+};
+var runTip = document.createElement('div');
+runTip.setAttribute('role', 'tooltip');
+runTip.style.cssText = 'position:fixed;z-index:80;display:none;pointer-events:none;width:260px;box-sizing:border-box;border-radius:12px;background:' + C.navy + ';color:#FAFAFA;padding:12px 14px;box-shadow:0 8px 24px rgba(7,44,74,0.25);font-family:Inter,sans-serif';
+document.body.appendChild(runTip);
+function dur(n) { return n >= 60 ? Math.round(n / 30.4) + ' months' : n >= 14 ? Math.round(n / 7) + ' weeks' : n + (n === 1 ? ' day' : ' days'); }
+function showRunTip(el, e) {
+  var st = el.dataset.st;
+  runTip.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">' + badge(st, 1) + '<span style="font-size:12px;opacity:.8">' + dur(+el.dataset.days) + '</span></div>' +
+    '<div style="margin-top:8px;font-size:13px;font-weight:600">' + el.dataset.range + '</div>' +
+    '<div style="margin-top:2px;font-size:12px;opacity:.8">Performance ' + el.dataset.perf + '</div>' +
+    '<p style="margin:8px 0 0;font-size:12px;line-height:1.45">' + ST_MEANS[st] + '</p>';
+  runTip.style.display = 'block';
+  var x = Math.min(e.clientX + 12, window.innerWidth - runTip.offsetWidth - 8), y = e.clientY - runTip.offsetHeight - 12;
+  runTip.style.left = Math.max(8, x) + 'px'; runTip.style.top = (y < 8 ? e.clientY + 16 : y) + 'px';
+}
 function statusHistoryHtml(l, startIdx) {
   var runs = [];
   for (var k = startIdx; k <= NOW; k++) {
@@ -457,7 +479,8 @@ function statusHistoryHtml(l, startIdx) {
   var span = Math.max(1, STOPS[startIdx].days);
   var strip = runs.map(function (r, i) {
     var end = i < runs.length - 1 ? STOPS[runs[i + 1].from].days : 0, w = Math.max(2, (STOPS[r.from].days - end) / span * 100);
-    return '<span title="' + LBL[r.st] + ' · ' + fmtStopDate(STOPS[r.from].days, false) + ' – ' + (end ? fmtStopDate(end, false) : 'today') + '" style="flex:' + w + ' 1 0;min-width:6px;display:flex;align-items:center;overflow:hidden;padding:0 ' + (w >= 12 ? 8 : 0) + 'px;font-size:11px;font-weight:600;color:#FAFAFA;white-space:nowrap;background:' + COL[r.st] + '">' + (w >= 12 ? LBL[r.st] : '') + '</span>';
+    var ps = l.perf.slice(r.from, r.to + 1), lo = Math.min.apply(null, ps), hi = Math.max.apply(null, ps);
+    return '<span data-run data-st="' + r.st + '" data-range="' + (r.from === NOW ? 'Today' : fmtStopDate(STOPS[r.from].days, false) + ' – ' + (r.to === NOW ? 'today' : fmtStopDate(STOPS[r.to].days, false))) + '" data-days="' + Math.max(1, STOPS[r.from].days - end) + '" data-perf="' + (lo === hi ? lo + '%' : lo + '–' + hi + '%') + '" style="cursor:default;flex:' + w + ' 1 0;min-width:6px;display:flex;align-items:center;overflow:hidden;padding:0 ' + (w >= 12 ? 8 : 0) + 'px;font-size:11px;font-weight:600;color:#FAFAFA;white-space:nowrap;background:' + COL[r.st] + '">' + (w >= 12 ? LBL[r.st] : '') + '</span>';
   }).join('');
   return '<h3 style="' + FJK + 'margin:0 0 4px;font-size:16px;font-weight:700">Status history</h3>' +
     '<p style="margin:0 0 10px;font-size:12px;color:' + C.muted + '">' + STOPS[startIdx].date + ' → ' + STOPS[NOW].date + ', the period shown on the chart</p>' +
@@ -470,7 +493,7 @@ modal.style.cssText = 'position:fixed;inset:0;z-index:70;display:none;align-item
 modal.innerHTML = '<div role="dialog" aria-modal="true" aria-label="Location trend" style="position:relative;box-sizing:border-box;width:100%;max-width:820px;max-height:92vh;display:flex;overflow:hidden;border-radius:16px;background:#FAFAFA;box-shadow:0 16px 48px rgba(7,44,74,0.25);font-family:Inter,sans-serif;color:' + C.navy + '"><button type="button" data-close aria-label="Close" style="position:absolute;z-index:2;right:20px;top:16px;width:36px;height:36px;border:0;border-radius:999px;background:' + C.soft + ';color:' + C.navy + ';font-size:20px;line-height:1;cursor:pointer">×</button><div data-scroll style="flex:1;min-height:0;overflow-y:auto;padding:28px 32px 32px;scrollbar-width:thin;scrollbar-color:#BDC6CE transparent"></div></div>';
 document.body.appendChild(modal);
 var mscroll = modal.querySelector('[data-scroll]'), chart = null, mState = { l: null, k: null };
-function closeM() { modal.style.display = 'none'; }
+function closeM() { modal.style.display = 'none'; runTip.style.display = 'none'; }
 modal.querySelector('[data-close]').onclick = closeM;
 modal.addEventListener('click', function (e) { if (e.target === modal) closeM(); });
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeM(); });
@@ -495,6 +518,10 @@ function renderM() {
   mscroll.innerHTML = h;
   mscroll.querySelectorAll('[data-mp]').forEach(function (b) { b.onclick = function () { mState.k = +b.dataset.mp; renderM(); }; });
   mscroll.querySelectorAll('[data-mm]').forEach(function (b) { b.onclick = function () { mState.m = b.dataset.mm; renderM(); }; });
+  mscroll.querySelectorAll('[data-run]').forEach(function (el) {
+    el.onmousemove = function (e) { el.style.filter = 'brightness(0.92)'; showRunTip(el, e); };
+    el.onmouseleave = function () { el.style.filter = ''; runTip.style.display = 'none'; };
+  });
   var cv = mscroll.querySelector('canvas');
   var sets = [{ label: l.name, data: pts.map(function (p) { return p.v; }), borderColor: C.navy, backgroundColor: C.navy, borderWidth: 2.6, pointRadius: 0, pointHoverRadius: 4, tension: isM ? 0 : 0.3, stepped: isM ? 'middle' : false }];
   if (avg) sets.push({ label: 'Network average', data: avg.map(function (p) { return p.v; }), borderColor: '#9AB0C2', backgroundColor: '#9AB0C2', borderWidth: 1.8, borderDash: [4, 4], pointRadius: 0, pointHoverRadius: 3, tension: 0.3 });
