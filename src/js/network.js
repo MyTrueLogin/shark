@@ -360,6 +360,7 @@ function renderOverview() {
 function paintLeaderboard() {
   document.querySelectorAll('[data-net-chip]').forEach(function (b) { var w = b.parentElement; w.parentElement.insertBefore(w.firstChild, w); w.remove(); });
   if (NOW < 1) return;
+  var first = null;
   document.querySelectorAll('#location-leaderboard tbody tr[role="link"]').forEach(function (tr) {
     var nm = (tr.children[1].querySelector('a') || {}).textContent || '';
     var l = LOCS.filter(function (x) { return nm.trim() === x.name || nm.trim() === CLIENT + ' - ' + x.name; })[0];
@@ -376,7 +377,34 @@ function paintLeaderboard() {
     b.onmouseleave = function () { b.style.boxShadow = 'none'; };
     b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); openChart(l); };
     wrap.appendChild(b);
+    if (!first) first = { b: b, l: l };
   });
+  if (first) pinTip(first.b, first.l);
+}
+
+// Pre-opened hint on the first Performance chip of the leaderboard (promo example): shows without hover
+// that the chip is clickable; same look as the «i» tips. The button and the chip open the trend modal.
+var pin = null;
+function pinTip(b, l) {
+  if (!pin) {
+    pin = document.createElement('div');
+    pin.setAttribute('role', 'tooltip');
+    pin.style.cssText = 'position:absolute;z-index:40;width:280px;box-sizing:border-box;border-radius:12px;background:' + C.navy + ';color:#FAFAFA;padding:16px;box-shadow:0 8px 24px rgba(7,44,74,0.25);font-family:Inter,sans-serif';
+    pin.innerHTML = '<span data-arrow style="position:absolute;top:-5px;width:12px;height:12px;background:' + C.navy + ';transform:rotate(45deg);border-radius:2px"></span><div style="' + FJK + 'font-size:14px;font-weight:700;margin-bottom:4px">Performance trend</div><p data-s style="margin:0;font-size:13px;line-height:1.45"></p><button type="button" data-open style="margin-top:12px;border:0;cursor:pointer;border-radius:6px;background:#B9E3FE;color:' + C.navy + ';padding:6px 12px;' + FJK + 'font-size:12px;font-weight:600">Open trend</button>';
+    document.body.appendChild(pin);
+    window.addEventListener('resize', function () { if (pin.$b) placePin(); });
+  }
+  pin.$b = b;
+  pin.querySelector('[data-s]').textContent = 'Click the change to see ' + l.name + '\'s Performance over time, its status history and position in the local market.';
+  pin.querySelector('[data-open]').onclick = function (e) { e.stopPropagation(); openChart(l); };
+  if (b.animate) b.animate([{ boxShadow: '0 0 0 0 rgba(0,94,157,0.45)' }, { boxShadow: '0 0 0 8px rgba(0,94,157,0)' }], { duration: 1600, iterations: Infinity });
+  placePin();
+}
+function placePin() {
+  var r = pin.$b.getBoundingClientRect(), left = Math.max(16, Math.min(r.left + r.width / 2 - 28, document.documentElement.clientWidth - 296));
+  pin.style.left = left + window.scrollX + 'px';
+  pin.style.top = r.bottom + 8 + window.scrollY + 'px';
+  pin.querySelector('[data-arrow]').style.left = Math.max(10, Math.min(r.left + r.width / 2 - left - 6, 258)) + 'px';
 }
 
 // ---------- trend modal ----------
