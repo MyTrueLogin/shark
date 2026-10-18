@@ -72,6 +72,6 @@ design/export/         сирий експорт із Claude Design (джере�
    Сайт буде на `https://<owner>.github.io/shark/`.
 2. **Свій сервер (необов'язково)** — rsync `dist/` по SSH. Працює, лише коли задано секрет `SSH_HOST`.
    **Settings → Secrets and variables → Actions**:
-   - Secrets: `SSH_HOST`, `SSH_USER`, `SSH_KEY` (приватний ключ, публічна частина — у `~/.ssh/authorized_keys` на сервері),
-     `DEPLOY_PATH` (абсолютний шлях до webroot, напр. `/var/www/shark`).
+   - Secrets: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD` (пароль SSH-користувача), `DEPLOY_PATH` (абсолютний шлях до webroot,
+     напр. `/var/www/shark`). Замість пароля можна задати `SSH_KEY` (приватний ключ) — тоді вхід за ключем.
    - Variables: `SSH_PORT` (якщо не 22).
