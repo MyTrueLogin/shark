@@ -113,12 +113,6 @@ arrow.style.cssText = 'position:absolute;width:12px;height:12px;background:#072C
 tip.appendChild(arrow)
 document.body.appendChild(tip)
 
-const tip2 = document.createElement('div')
-tip2.setAttribute('role', 'tooltip')
-tip2.style.cssText = 'position:fixed;z-index:60;display:none;width:280px;box-sizing:border-box;border-radius:12px;background:#FFFFFF;color:#072C4A;padding:14px 48px 16px 16px;box-shadow:0 0 0 1px rgba(0,94,157,0.15),0 8px 24px rgba(7,44,74,0.12);font-family:Inter,sans-serif'
-tip2.innerHTML = '<span data-ic style="position:absolute;top:8px;right:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#F0F8FF;color:#005E9D"></span><div data-t style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px"></div><p data-s style="margin:0;font-size:13px;line-height:1.45;color:#3D5568"></p>'
-document.body.appendChild(tip2)
-
 const modal = document.createElement('div')
 modal.style.cssText = 'position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(7,44,74,0.4);padding:16px'
 modal.innerHTML = '<div role="dialog" aria-modal="true" style="position:relative;box-sizing:border-box;width:100%;max-width:720px;max-height:90vh;display:flex;overflow:hidden;border-radius:16px;background:#FAFAFA;box-shadow:0 16px 48px rgba(7,44,74,0.25);font-family:Inter,sans-serif;color:#072C4A"><button type="button" data-close aria-label="Close" style="position:absolute;z-index:1;right:20px;top:16px;width:36px;height:36px;border:0;border-radius:999px;background:#F0F8FF;color:#072C4A;font-size:20px;line-height:1;cursor:pointer">×</button><div style="flex:1;min-height:0;overflow-y:auto;padding:32px;scrollbar-width:thin;scrollbar-color:#BDC6CE transparent"><div data-body></div></div></div>'
@@ -144,7 +138,6 @@ function place(btn) {
 }
 function showHint(el) {
   clearTimeout(hideT)
-  hide2()
   current = el
   tip.querySelector('[data-t]').textContent = el.dataset.hintTitle
   tip.querySelector('[data-s]').textContent = el.dataset.hint
@@ -166,8 +159,6 @@ function show(btn) {
   clearTimeout(hideT)
   const d = INFO[btn.dataset.info]
   if (!d) return
-  if (btn.dataset.tip === 'corner') return showCorner(btn, d)
-  hide2()
   tip.querySelector('[data-more]').style.display = ''
   current = btn
   tip.querySelector('[data-t]').textContent = d.title
@@ -175,25 +166,8 @@ function show(btn) {
   tip.style.display = 'block'
   place(btn)
 }
-function placeCorner(btn) {
-  const r = btn.getBoundingClientRect()
-  tip2.style.left = Math.max(8, r.right + 8 - 280) + 'px'
-  tip2.style.top = (r.top - 8) + 'px'
-}
-function showCorner(btn, d) {
-  tip.style.display = 'none'
-  current = btn
-  tip2.querySelector('[data-t]').textContent = d.title
-  tip2.querySelector('[data-s]').textContent = d.short
-  const ic = tip2.querySelector('[data-ic]')
-  ic.innerHTML = ''
-  ic.appendChild(btn.querySelector('i').cloneNode(true))
-  tip2.style.display = 'block'
-  placeCorner(btn)
-}
-function hide2() { tip2.style.display = 'none' }
 function hideSoon() { clearTimeout(hideT); hideT = setTimeout(hide, 150) }
-function hide() { tip.style.display = 'none'; hide2(); current = null }
+function hide() { tip.style.display = 'none'; current = null }
 
 function openModal(key) {
   const d = INFO[key]
@@ -246,9 +220,6 @@ document.querySelectorAll('span, th, div').forEach((el) => {
   for (const [rx, title, text] of HINT_RX) if (rx.test(t)) return attachHint(target, title, text)
 })
 
-tip2.addEventListener('mouseenter', () => clearTimeout(hideT))
-tip2.addEventListener('mouseleave', hideSoon)
-tip2.addEventListener('click', (e) => { e.stopPropagation(); if (e.target.closest('[data-ic]')) hide() })
 tip.addEventListener('mouseenter', () => clearTimeout(hideT))
 tip.addEventListener('mouseleave', hideSoon)
 tip.addEventListener('click', (e) => e.stopPropagation())
@@ -261,5 +232,5 @@ modal.querySelector('[data-close]').addEventListener('click', closeModal)
 modal.addEventListener('click', (e) => { if (e.target === modal) closeModal() })
 document.addEventListener('click', hide)
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { hide(); closeModal() } })
-window.addEventListener('scroll', () => { if (current) (current.dataset.tip === 'corner' ? placeCorner : place)(current) }, true)
+window.addEventListener('scroll', () => { if (current) place(current) }, true)
 window.addEventListener('resize', hide)

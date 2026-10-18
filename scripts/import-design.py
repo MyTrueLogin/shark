@@ -97,6 +97,9 @@ def convert(page, modules):
                             '<div id="map-timeline" class="mt-4 mb-3 px-2"></div>'
                             + legend.group(0).replace('px-6 pb-5 pt-1', 'px-2 pb-4'), 1)
 
+    # Підказки «i» — усі одного вигляду (варіант «corner» для Reputation більше не потрібен)
+    html = html.replace(' data-tip="corner"', '')
+
     if page == 'onboarding':
         html = re.sub(r'<body( class=")?', lambda m: '<body class="page-onboarding ' if m.group(1) else '<body class="page-onboarding"', html, count=1)
 
