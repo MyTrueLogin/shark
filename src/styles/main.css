@@ -1,0 +1,68 @@
+@import 'tailwindcss';
+@import './icons.css';
+
+/* Tailwind scans the pages and the scripts that build markup at runtime */
+@source '../../*.html';
+@source '../js';
+
+@theme {
+  --font-sans: Inter, sans-serif;
+
+  /* Shark palette (used across pages as arbitrary values, e.g. text-[#072C4A]) */
+  --color-navy: #072c4a;
+  --color-brand: #005e9d;
+  --color-muted: #506a7f;
+  --color-soft: #f0f8ff;
+  --color-line: #e6ebf0;
+  --color-surface: #fafafa;
+  --color-page: #f7f7f7;
+  --color-status-strong: #059669;
+  --color-status-average: #f59e0b;
+  --color-status-weak: #f87171;
+  --color-status-sleeping: #9a9a9a;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: #e5e7eb;
+  }
+
+  html,
+  body {
+    margin: 0;
+    background: #f7f7f7;
+    font-family: Inter, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* Plus Jakarta Sans — headings, tabs, buttons */
+.fjk {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Rubik — numbers */
+.frub {
+  font-family: Rubik, sans-serif;
+}
+
+/* Monochrome icon: <i class="dc-icon i-search" style="width:18px;height:18px"></i>, colour = currentColor */
+.dc-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+  vertical-align: middle;
+}
+
+.page-onboarding {
+  font-size: 14px;
+  color: #072c4a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,23 @@
+{
+  "name": "shark-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "import-design": "python3 scripts/import-design.py"
+  },
+  "dependencies": {
+    "chart.js": "4.4.4",
+    "d3": "7.9.0",
+    "topojson-client": "3.1.0",
+    "us-atlas": "3.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.1.11",
+    "tailwindcss": "4.1.11",
+    "vite": "6.3.5"
+  }
+}

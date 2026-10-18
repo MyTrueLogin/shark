@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBJ La Tavola — All Locations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+  <body>
+    
+    <nav class="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 gap-1 rounded-full bg-white p-1 shadow-[0_2px_12px_rgba(7,44,74,0.15)]">
+      <a href="single-location.html" class="fjk rounded-full px-4 py-2 text-[13px] font-semibold transition-colors bg-transparent text-[#072C4A]">Single Location</a>
+      <a href="all-locations.html" class="fjk rounded-full px-4 py-2 text-[13px] font-semibold transition-colors bg-[#072C4A] text-[#FAFAFA]">All Locations</a>
+    </nav>
+    <div class="bg-[#F7F7F7]">
+      <div class="relative mx-auto min-h-screen w-full max-w-[1440px] overflow-x-clip bg-[#F7F7F7]">
+        <header class="flex min-h-[82px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6 lg:flex-nowrap lg:pl-[52px] lg:pr-[52px]">
+          <a href="#" class="frub whitespace-nowrap text-[25px] font-medium tracking-tighter text-[#072C4A] no-underline">BBJ La Tavola</a>
+          <div class="hidden flex-row gap-2 lg:flex">
+            <a href="single-location.html" class="fjk flex h-[32px] items-center rounded-lg px-3 text-[15px] font-semibold no-underline cursor-pointer bg-[#072C4A]/[0.06] text-[#072C4A] transition-colors">Dashboard</a>
+            <a href="metrics.html" class="fjk flex h-[32px] items-center rounded-lg px-3 text-[15px] font-medium no-underline cursor-pointer text-[#506A7F] transition-colors hover:text-[#072C4A] hover:bg-[#072C4A]/[0.04]">Metrics</a>
+          </div>
+          <label class="group ml-auto flex h-[39px] w-[clamp(150px,34vw,361px)] cursor-text items-center gap-3 rounded-[10px] bg-[#072C4A]/[0.04] px-[14px] shadow-none transition-shadow hover:shadow-[inset_0_0_0_1px_rgba(0,94,157,0.25)] focus-within:shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.6)]">
+            <input type="text" placeholder="Search" class="min-w-0 flex-1 border-0 bg-transparent text-[15px] font-medium text-[#072C4A] outline-hidden placeholder:text-[#072C4A]/60">
+            <i class="dc-icon i-search shrink-0 text-[#072C4A]/60 transition-colors group-hover:text-[#005E9D] group-focus-within:text-[#005E9D]" style="width:18px;height:18px"></i>
+          </label>
+          <i class="dc-icon i-settings ml-4 hidden shrink-0 cursor-pointer text-[#072C4A] opacity-70 transition-opacity hover:opacity-100 sm:inline-block lg:ml-[34px]" style="width:24px;height:24px"></i>
+          <i class="dc-icon i-info ml-3 hidden shrink-0 cursor-pointer text-[#072C4A] opacity-70 transition-opacity hover:opacity-100 sm:inline-block lg:ml-[20px]" style="width:24px;height:24px"></i>
+          <div class="ml-3 h-[44px] w-[44px] shrink-0 cursor-pointer overflow-hidden rounded-full border-[1.25px] border-[#072C4A]/35 lg:ml-[28px]">
+            <img src="assets/img/avatar.png" alt="User avatar" class="h-full w-full rounded-full object-cover">
+          </div>
+        </header>
+        <div class="flex flex-col gap-6 px-4 pb-[140px] sm:px-6 lg:px-[48px]">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 class="frub text-[32px] font-semibold tracking-[-0.03em] text-[#072C4A]">All Locations</h1>
+            <p class="mt-1 text-[15px] text-[#072C4A]/60">Your business performance across every market</p>
+          </div>
+          <div id="period-bar" class="flex flex-wrap items-center gap-3"></div>
+          </div>
+          <section id="status-changes" class="w-full rounded-2xl bg-[#FAFAFA] px-6 pt-5 pb-6 shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)]" style="min-height:280px"></section>
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <article class="relative h-[271px] overflow-hidden rounded-2xl shadow-[0px_2px_4px_rgba(0,0,0,0.06)]">
+              <div class="absolute inset-x-0 top-0 z-3 h-[235px] overflow-hidden rounded-2xl bg-[#FAFAFA] shadow-[inset_0_0_0_1.3px_rgba(0,94,157,0.25)]">
+                <span class="fjk absolute left-4 top-[14px] text-[24px] font-bold tracking-[-0.014em] text-[#072C4A]">Strong</span><button type="button" data-info="strong" aria-label="What is Strong Presence?" class="absolute right-[12px] top-[14px] z-[4] flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#072C4A] transition-[box-shadow,color] hover:shadow-[inset_0_0_0_1.2px_#BDC6CE] hover:text-[#005E9D]"></button>
+                <div data-card="strong" class="absolute left-4 top-[51px] flex items-end gap-3"><span class="frub text-[80px] font-semibold leading-[0.95] tracking-tighter text-[#072C4A]">0</span></div>
+                <div class="absolute left-4 right-4 top-[140px] flex items-center justify-between gap-3">
+                  <span class="text-[14px] leading-[1.15] text-[#072C4A]"><span class="font-semibold">Largest</span> market share</span>
+                  <div class="flex h-[26px] shrink-0 items-center gap-1 rounded-full px-2 bg-[#BDF0DC] shadow-[inset_0_0_0_1.2px_rgba(6,118,71,0.25),0px_2px_4px_rgba(0,0,0,0.06)]"><i class="dc-icon i-dominant text-[#074B34]" style="width:14px;height:14px"></i><span class="whitespace-nowrap text-[12px] font-medium text-[#074B34]">Strongest Position</span></div>
+                </div>
+                <span class="absolute left-4 top-[190px] text-[14px] font-medium text-[#072C4A]/60">0 of 14 locations · 0 states</span>
+                
+              </div>
+              <div class="absolute bottom-0 left-0 flex h-[52px] w-full items-center gap-2 rounded-b-2xl border-[1.3px] border-[#005E9D]/20 bg-[#FAFAFA] px-4"><i class="dc-icon i-shield mt-4 shrink-0 text-[#005E9D]" style="width:16px;height:16px"></i><span class="pt-4 text-[12px] leading-[1.45] text-[#005E9D]">Protect your market lead.</span></div>
+            </article>
+            <article class="relative h-[271px] overflow-hidden rounded-2xl shadow-[0px_2px_4px_rgba(0,0,0,0.06)]">
+              <div class="absolute inset-x-0 top-0 z-3 h-[235px] overflow-hidden rounded-2xl bg-[#FAFAFA] shadow-[inset_0_0_0_1.3px_rgba(0,94,157,0.25)]">
+                <span class="fjk absolute left-4 top-[14px] text-[24px] font-bold tracking-[-0.014em] text-[#072C4A]">Average</span><button type="button" data-info="average" aria-label="What is Average Presence?" class="absolute right-[12px] top-[14px] z-[4] flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#072C4A] transition-[box-shadow,color] hover:shadow-[inset_0_0_0_1.2px_#BDC6CE] hover:text-[#005E9D]"></button>
+                <div data-card="average" class="absolute left-4 top-[51px] flex items-end gap-3"><span class="frub text-[80px] font-semibold leading-[0.95] tracking-tighter text-[#072C4A]">2</span></div>
+                <div class="absolute left-4 right-4 top-[140px] flex items-center justify-between gap-3">
+                  <span class="text-[14px] leading-[1.15] text-[#072C4A]"><span class="font-semibold">Average</span> market share</span>
+                  <div class="flex h-[26px] shrink-0 items-center gap-1 rounded-full px-2 bg-[#FDD28A] shadow-[inset_0_0_0_1.2px_rgba(146,97,14,0.15),0px_2px_4px_rgba(0,0,0,0.06)]"><i class="dc-icon i-moderate text-[#92610E]" style="width:14px;height:14px"></i><span class="whitespace-nowrap text-[12px] font-medium text-[#92610E]">Moderate Standing</span></div>
+                </div>
+                <span class="absolute left-4 top-[190px] text-[14px] font-medium text-[#072C4A]/60">2 of 14 locations · 2 states</span>
+                
+              </div>
+              <div class="absolute bottom-0 left-0 flex h-[52px] w-full items-center gap-2 rounded-b-2xl border-[1.3px] border-[#005E9D]/20 bg-[#FAFAFA] px-4"><i class="dc-icon i-bar mt-4 shrink-0 text-[#005E9D]" style="width:16px;height:16px"></i><span class="pt-4 text-[12px] leading-[1.45] text-[#005E9D]">Close the competitor gap.</span></div>
+            </article>
+            <article class="relative h-[271px] overflow-hidden rounded-2xl shadow-[0px_2px_4px_rgba(0,0,0,0.06)]">
+              <div class="absolute inset-x-0 top-0 z-3 h-[235px] overflow-hidden rounded-2xl bg-[#FAFAFA] shadow-[inset_0_0_0_1.3px_rgba(0,94,157,0.25)]">
+                <span class="fjk absolute left-4 top-[14px] text-[24px] font-bold tracking-[-0.014em] text-[#072C4A]">Weak</span><button type="button" data-info="weak" aria-label="What is Weak Presence?" class="absolute right-[12px] top-[14px] z-[4] flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#072C4A] transition-[box-shadow,color] hover:shadow-[inset_0_0_0_1.2px_#BDC6CE] hover:text-[#005E9D]"></button>
+                <div data-card="weak" class="absolute left-4 top-[51px] flex items-end gap-3"><span class="frub text-[80px] font-semibold leading-[0.95] tracking-tighter text-[#072C4A]">3</span></div>
+                <div class="absolute left-4 right-4 top-[140px] flex items-center justify-between gap-3">
+                  <span class="text-[14px] leading-[1.15] text-[#072C4A]"><span class="font-semibold">Lower</span> than average market share</span>
+                  <div class="flex h-[26px] shrink-0 items-center gap-1 rounded-full px-2 bg-[#EF4444] shadow-[inset_0_0_0_1.2px_rgba(160,32,20,0.35),0px_2px_4px_rgba(0,0,0,0.06)]"><i class="dc-icon i-alert text-[#FAFAFA]" style="width:14px;height:14px"></i><span class="whitespace-nowrap text-[12px] font-medium text-[#FAFAFA]">Needs Attention</span></div>
+                </div>
+                <span class="absolute left-4 top-[190px] text-[14px] font-medium text-[#072C4A]/60">3 of 14 locations · 3 states</span>
+                
+              </div>
+              <div class="absolute bottom-0 left-0 flex h-[52px] w-full items-center gap-2 rounded-b-2xl border-[1.3px] border-[#005E9D]/20 bg-[#FAFAFA] px-4"><i class="dc-icon i-comment mt-4 shrink-0 text-[#005E9D]" style="width:16px;height:16px"></i><span class="pt-4 text-[12px] leading-[1.45] text-[#005E9D]">Address reviews, boost engagement.</span></div>
+            </article>
+            <article class="relative h-[271px] overflow-hidden rounded-2xl shadow-[0px_2px_4px_rgba(0,0,0,0.06)]">
+              <div class="absolute inset-x-0 top-0 z-3 h-[235px] overflow-hidden rounded-2xl bg-[#FAFAFA] shadow-[inset_0_0_0_1.3px_rgba(0,94,157,0.25)]">
+                <span class="fjk absolute left-4 top-[14px] text-[24px] font-bold tracking-[-0.014em] text-[#072C4A]">Sleeping</span><button type="button" data-info="sleeping" aria-label="What is Sleeping Presence?" class="absolute right-[12px] top-[14px] z-[4] flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#072C4A] transition-[box-shadow,color] hover:shadow-[inset_0_0_0_1.2px_#BDC6CE] hover:text-[#005E9D]"></button>
+                <div data-card="sleeping" class="absolute left-4 top-[51px] flex items-end gap-3"><span class="frub text-[80px] font-semibold leading-[0.95] tracking-tighter text-[#072C4A]">9</span></div>
+                <div class="absolute left-4 right-4 top-[140px] flex items-center justify-between gap-3">
+                  <span class="text-[14px] leading-[1.15] text-[#072C4A]"><span class="font-semibold">No measurable</span> local visibility</span>
+                  <div class="flex h-[26px] shrink-0 items-center gap-1 rounded-full px-2 bg-[#9A9A9A] shadow-[inset_0_0_0_1.2px_rgba(80,106,127,0.25),0px_2px_4px_rgba(0,0,0,0.06)]"><i class="dc-icon i-alert text-[#FAFAFA]" style="width:14px;height:14px"></i><span class="whitespace-nowrap text-[12px] font-medium text-[#FAFAFA]">Low Visibility</span></div>
+                </div>
+                <span class="absolute left-4 top-[190px] text-[14px] font-medium text-[#072C4A]/60">9 of 14 locations · 8 states</span>
+                
+              </div>
+              <div class="absolute bottom-0 left-0 flex h-[52px] w-full items-center gap-2 rounded-b-2xl border-[1.3px] border-[#005E9D]/20 bg-[#FAFAFA] px-4"><i class="dc-icon i-comment mt-4 shrink-0 text-[#005E9D]" style="width:16px;height:16px"></i><span class="pt-4 text-[12px] leading-[1.45] text-[#005E9D]">Rebuild presence, track recovery.</span></div>
+            </article>
+          </div>
+          <section class="w-full scroll-mt-6 rounded-2xl bg-[#FAFAFA] shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)]">
+            <div class="flex flex-col gap-3 px-6 pt-5 pb-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 class="fjk text-[22px] font-bold tracking-[-0.01em] text-[#072C4A]">Map Tracker</h2>
+                <p class="mt-1 text-[14px] text-[#072C4A]/70">Capture a high-level view of the markets where your locations are represented</p>
+              </div>
+              <div class="relative self-start">
+                <div tabindex="0" class="inline-flex cursor-pointer select-none items-center gap-1.5 rounded-lg border border-[#005E9D]/20 bg-[#FAFAFA] px-3 py-1.5 text-[12px] font-medium text-[#072C4A]/85 transition-colors hover:border-[#005E9D]/45"><i class="dc-icon i-chevron-right text-[#072C4A]/70 transition-transform rotate-90" style="width:14px;height:14px"></i><span>Filter</span></div>
+              </div>
+            </div>
+            <div class="px-4 pb-2">
+              <div id="map-timeline" class="mt-4 mb-5 px-2"></div>
+              <div class="relative w-full">
+                <div id="map-root" class="relative w-full overflow-hidden" style="aspect-ratio:975/610;max-height:700px"></div>
+                <div class="absolute bottom-3 right-3 z-2 flex flex-col gap-1.5">
+                  <button type="button" aria-label="Zoom in" class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[4px] border-[0.8px] border-[#005E9D]/20 bg-white p-0 text-[#2B4B64] transition-colors hover:border-[#005E9D]/45 hover:bg-[#F0F8FF]">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1V13M1 7H13"></path></svg>
+                  </button>
+                  <button type="button" aria-label="Zoom out" class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[4px] border-[0.8px] border-[#005E9D]/20 bg-white p-0 text-[#2B4B64] transition-colors hover:border-[#005E9D]/45 hover:bg-[#F0F8FF]">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 7H13"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">
+              <span class="inline-flex items-center gap-2 text-[12px] font-medium text-[#072C4A]/70"><span class="h-2.5 w-2.5 rounded-full bg-[#059669]"></span>Strong presence</span>
+              <span class="inline-flex items-center gap-2 text-[12px] font-medium text-[#072C4A]/70"><span class="h-2.5 w-2.5 rounded-full bg-[#F59E0B]"></span>Average presence</span>
+              <span class="inline-flex items-center gap-2 text-[12px] font-medium text-[#072C4A]/70"><span class="h-2.5 w-2.5 rounded-full bg-[#F87171]"></span>Weak presence</span>
+              <span class="inline-flex items-center gap-2 text-[12px] font-medium text-[#072C4A]/70"><span class="h-2.5 w-2.5 rounded-full bg-[#9A9A9A]"></span>Sleeping presence</span>
+              <span class="inline-flex items-center gap-2 text-[12px] font-medium text-[#072C4A]/70"><span class="h-2.5 w-2.5 rounded-full bg-[#E5E9ED]"></span>No locations</span>
+            </div>
+          </section>
+          <section id="location-leaderboard" class="w-full scroll-mt-6 rounded-2xl bg-[#FAFAFA] shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)]">
+            <div class="flex flex-col gap-3 px-6 pt-5 pb-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 class="fjk text-[22px] font-bold tracking-[-0.01em] text-[#072C4A]">Internal Leaderboard</h2>
+                <p class="mt-1 text-[14px] text-[#072C4A]/70">Compare performance across your locations</p>
+              </div>
+              <div class="relative self-start">
+                <div tabindex="0" class="inline-flex cursor-pointer select-none items-center gap-1.5 rounded-lg border border-[#005E9D]/20 bg-[#FAFAFA] px-3 py-1.5 text-[12px] font-medium text-[#072C4A]/85 transition-colors hover:border-[#005E9D]/45"><i class="dc-icon i-chevron-right text-[#072C4A]/70 transition-transform rotate-90" style="width:14px;height:14px"></i><span>Sort by</span></div>
+              </div>
+            </div>
+            <div class="overflow-x-auto px-4">
+              <table class="w-full min-w-[860px] border-separate border-spacing-0 text-left">
+                <thead>
+                  <tr class="fjk text-[13px] font-normal text-[#2B4B64]">
+                    <th class="whitespace-nowrap py-3 pl-2 pr-2 font-normal">#</th>
+                    <th class="whitespace-nowrap px-4 py-3 font-normal">Company</th>
+                    <th class="whitespace-nowrap px-4 py-3 font-normal"><span class="inline-flex items-center gap-1">Performance<button type="button" data-info="performance" data-size="14" aria-label="What is Performance?" class="flex h-[20px] w-[20px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#072C4A]/60 hover:text-[#005E9D]"></button></span></th>
+                    <th class="whitespace-nowrap px-4 py-3 font-normal">Status</th>
+                    <th class="whitespace-nowrap px-4 py-3 font-normal"><span class="inline-flex items-center gap-1">Rating<button type="button" data-info="rating" data-size="14" aria-label="What is Rating?" class="flex h-[20px] w-[20px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#072C4A]/60 hover:text-[#005E9D]"></button></span></th>
+                    <th class="whitespace-nowrap px-4 py-3 font-normal"><span class="inline-flex items-center gap-1">Reviews<button type="button" data-info="reviews" data-size="14" aria-label="What is Reviews?" class="flex h-[20px] w-[20px] cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#072C4A]/60 hover:text-[#005E9D]"></button></span></th>
+                    <th class="whitespace-nowrap px-4 py-3 font-normal">Last Review</th>
+                    <th class="py-3 pl-2 pr-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">1</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Seattle</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">WA · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#B54708">#11 of 21 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">71%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#F59E0B]">Average</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">5.0</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">11</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-08-12</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">2</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Niles (Headquarters)</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">IL · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#B54708">#16 of 29 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">59%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#F59E0B]">Average</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">4.2</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">57</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-08-21</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">3</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Denver</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">CO · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#16 of 17 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">51%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#F87171]">Weak</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">5.0</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">3</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-08-21</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">4</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Las Vegas</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">NV · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#B54708">#12 of 20 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">23%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#F87171]">Weak</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">4.2</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">5</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-09-04</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">5</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Dallas</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">TX · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#20 of 28 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">20%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#F87171]">Weak</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">4.3</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">14</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-08-12</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">6</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Atlanta</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">GA · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#23 of 30 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">20%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">4.5</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">8</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-05-13</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">7</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Beverly Hills</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">CA · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#B54708">#24 of 39 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">20%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">3.5</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">8</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-06-12</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">8</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Milwaukee</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">WI · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#8 of 11 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">20%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">3.5</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">6</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2024-09-11</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">9</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Orlando</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">FL · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#27 of 37 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">20%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">5.0</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">1</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2026-05-14</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">10</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Scottsdale</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">AZ · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#27 of 33 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">20%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">5.0</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">8</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">2024-09-11</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">11</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Boston</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">MA · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#32 of 32 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">5.0</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">No reviews</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">12</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Charleston</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">SC · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#20 of 20 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">4.0</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">No reviews</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">13</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Nashville</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">TN · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#12 of 12 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">1.0</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">No reviews</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                  <tr tabindex="0" role="link" class="[&amp;>td]:border-y-[1.2px] [&amp;>td]:border-transparent [&amp;>td:first-child]:border-l-[1.2px] [&amp;>td:first-child]:rounded-l-lg [&amp;>td:last-child]:border-r-[1.2px] [&amp;>td:last-child]:rounded-r-lg [&amp;>td]:transition-colors [&amp;:hover>td]:border-t-[#005E9D] [&amp;:hover>td]:border-b-[#005E9D] [&amp;:hover>td:first-child]:border-l-[#005E9D] [&amp;:hover>td:last-child]:border-r-[#005E9D] [&amp;:hover+tr>td>div]:bg-transparent cursor-pointer focus:outline-hidden">
+                    <td class="py-4 pl-2 pr-2"><span class="frub text-[28px] leading-none text-[#072C4A]">14</span></td>
+                    <td class="px-4 py-4">
+                      <a href="#" class="fjk text-[15px] text-[#072C4A] no-underline">BBJ La Tavola - Santa Barbara</a>
+                      <div class="mt-0.5 flex items-center gap-1.5 text-[11px] text-[#072C4A]/60">CA · <a href="single-location.html#market-leaderboard" class="font-semibold no-underline underline-offset-2 hover:underline" style="color:#D92D20">#8 of 8 in local market</a></div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0%</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1 text-[12px] text-[#FAFAFA] bg-[#9A9A9A]">Sleeping</span></td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" class="shrink-0 fill-current stroke-current stroke-2 text-[#005E9D]" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
+                        <span class="frub text-[22px] text-[#072C4A]">3.3</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4"><span class="frub text-[22px] text-[#072C4A]">0</span></td>
+                    <td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-[#BDC6CE] px-3.5 py-1 text-[12px] text-[#072C4A]">No reviews</span></td>
+                    <td class="py-4 pl-2 pr-2 text-right"><i class="dc-icon i-chevron-right text-[#072C4A]/60" style="width:18px;height:18px"></i></td>
+                  </tr>
+                  <tr aria-hidden="true">
+                    <td colspan="8" class="p-0">
+                      <div class="h-px bg-[#BDC6CE]/45"></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <script type="application/json" id="network-data">
+    {
+      "client": "BBJ La Tavola",
+      "today": "2026-10-10",
+      "stops": [{"daysAgo":364,"label":"1 year ago"},{"daysAgo":357},{"daysAgo":350},{"daysAgo":343},{"daysAgo":336},{"daysAgo":329},{"daysAgo":322},{"daysAgo":315},{"daysAgo":308},{"daysAgo":301},{"daysAgo":294},{"daysAgo":287},{"daysAgo":280},{"daysAgo":273},{"daysAgo":266},{"daysAgo":259},{"daysAgo":252},{"daysAgo":245},{"daysAgo":238},{"daysAgo":231},{"daysAgo":224},{"daysAgo":217},{"daysAgo":210},{"daysAgo":203},{"daysAgo":196},{"daysAgo":189},{"daysAgo":182},{"daysAgo":175},{"daysAgo":168},{"daysAgo":161},{"daysAgo":154},{"daysAgo":147},{"daysAgo":140},{"daysAgo":133},{"daysAgo":126},{"daysAgo":119},{"daysAgo":112},{"daysAgo":105},{"daysAgo":98},{"daysAgo":91,"label":"3 months ago"},{"daysAgo":84},{"daysAgo":77},{"daysAgo":70},{"daysAgo":63},{"daysAgo":56},{"daysAgo":49},{"daysAgo":42},{"daysAgo":35},{"daysAgo":28,"label":"1 month ago"},{"daysAgo":21},{"daysAgo":14},{"daysAgo":7,"label":"1 week ago"},{"daysAgo":0,"label":"Today"}],
+      "thresholds": {"strong":80,"average":50,"weak":25},
+      "locations": [
+      {"name":"Seattle","state":"WA","lat":47.61,"lon":-122.33,"performance":[12,11,13,17,15,14,18,21,18,19,23,23,21,23,27,26,24,28,31,28,28,33,34,31,33,37,37,35,38,41,39,38,43,44,42,43,47,47,45,48,51,49,47,51,52,49,49,53,52,55,61,69,71],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1]},
+      {"name":"Niles (Headquarters)","state":"IL","lat":42.02,"lon":-87.8,"performance":[57,59,55,55,58,58,54,55,58,56,53,56,58,54,53,57,56,53,54,57,55,52,54,56,53,52,55,55,52,52,55,54,51,53,55,52,50,53,54,52,51,56,56,53,56,60,58,57,60,62,58,57,59],"status":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1]},
+      {"name":"Denver","state":"CO","lat":39.74,"lon":-104.99,"performance":[10,10,13,10,8,12,13,10,10,14,13,10,12,15,13,11,14,16,13,12,16,16,13,14,17,16,13,16,18,15,14,18,18,15,16,19,18,15,17,18,21,21,28,32,31,34,40,42,44,45,50,49,51],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2]},
+      {"name":"Las Vegas","state":"NV","lat":36.17,"lon":-115.14,"performance":[40,39,39,43,43,40,42,46,44,42,45,47,44,44,48,48,45,47,51,49,47,50,52,50,49,53,54,51,52,56,55,52,55,58,55,54,58,59,56,58,60,59,56,58,60,58,56,59,58,48,39,34,23],"status":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2]},
+      {"name":"Dallas","state":"TX","lat":32.78,"lon":-96.8,"performance":[14,17,15,13,16,18,15,14,18,18,15,17,20,18,16,19,21,18,17,21,22,19,20,23,22,19,22,25,22,21,24,25,22,23,27,26,23,25,28,26,23,26,27,24,23,27,26,22,24,25,22,19,20],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]},
+      {"name":"Atlanta","state":"GA","lat":33.75,"lon":-84.39,"performance":[56,54,57,56,52,53,56,53,50,52,54,50,48,52,51,47,48,50,48,45,47,49,45,43,46,46,42,42,45,43,40,42,44,40,38,41,41,37,37,38,39,35,36,38,35,32,35,36,33,28,28,25,20],"status":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3]},
+      {"name":"Beverly Hills","state":"CA","lat":34.07,"lon":-118.4,"performance":[30,29,27,29,30,26,25,28,27,23,24,27,24,21,23,25,21,19,22,22,18,18,21,19,15,17,19,16,13,16,17,12,12,15,14,10,11,13,10,10,12,13,11,11,15,15,12,15,16,17,16,19,20],"status":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},
+      {"name":"Milwaukee","state":"WI","lat":43.04,"lon":-87.91,"performance":[28,30,29,25,26,29,27,24,27,28,25,23,27,27,23,23,27,25,21,24,26,22,21,24,24,20,21,24,22,19,21,23,20,18,21,22,18,18,21,19,17,19,22,19,17,20,22,19,20,22,21,18,20],"status":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},
+      {"name":"Orlando","state":"FL","lat":28.54,"lon":-81.38,"performance":[20,18,21,22,19,18,22,21,18,19,22,20,18,20,22,19,18,21,22,18,19,22,21,18,20,22,19,18,21,22,18,18,22,21,18,20,22,20,18,20,22,19,18,22,21,18,19,22,20,18,20,22,20],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},
+      {"name":"Scottsdale","state":"AZ","lat":33.49,"lon":-111.93,"performance":[21,22,19,20,23,21,19,21,23,20,19,23,23,19,20,23,22,19,21,23,20,19,22,23,19,20,23,22,19,21,23,21,19,22,23,20,19,23,22,21,20,23,21,18,21,23,19,18,20,21,18,19,20],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},
+      {"name":"Boston","state":"MA","lat":42.36,"lon":-71.06,"performance":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},
+      {"name":"Charleston","state":"SC","lat":32.78,"lon":-79.93,"performance":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},
+      {"name":"Nashville","state":"TN","lat":36.16,"lon":-86.78,"performance":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]},
+      {"name":"Santa Barbara","state":"CA","lat":34.42,"lon":-119.7,"performance":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"status":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]}
+      ]
+    }
+    </script>
+    <script type="module" src="/src/js/info-tips.js"></script>
+    <script type="module" src="/src/js/network.js"></script>
+  </body>
+</html>

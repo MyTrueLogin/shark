@@ -1,0 +1,28 @@
+{
+  "period": { "first": "2026-09-01", "last": "2026-10-08" },
+  "snapshots": { "first": "2026-09-11", "last": "2026-10-01" },
+  "profiles": [
+    { "name": "BBJ La Tavola - Seattle", "is_client": true, "reviews": 11, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 3, "profile_score": 50, "posts": 0, "last_review_age": 30 },
+    { "name": "Express Linen Rentals", "reviews": 6, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": 1460 },
+    { "name": "Pedersen's Event Rentals", "reviews": 63, "rating": 4.8, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 6, "profile_score": 50, "posts": 0, "last_review_age": 14 },
+    { "name": "Linen Sensation", "reviews": 8, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 3, "profile_score": 50, "posts": 0, "last_review_age": 1 },
+    { "name": "Adorn Event Rentals", "reviews": 11, "rating": 4.8, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 0, "profile_score": 30, "posts": 0, "last_review_age": 365 },
+    { "name": "A Tailored Affair", "reviews": 3, "rating": 2.3, "services": 1, "service_details": 1, "service_media": 0, "service_categories": 0, "attributes": 1, "profile_score": 60, "posts": 0, "last_review_age": 1095 },
+    { "name": "Globo Azul Events", "reviews": 28, "rating": 4.4, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": 365 },
+    { "name": "Hostess", "reviews": 1, "rating": 5, "services": 2, "service_details": 1, "service_media": 0, "service_categories": 1, "attributes": 1, "profile_score": 70, "posts": 0, "last_review_age": 270 },
+    { "name": "Pearl Studio", "reviews": 12, "rating": 4.7, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 40, "posts": 0, "last_review_age": 120 },
+    { "name": "TND Event Rentals and Supplies", "reviews": 73, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 5, "profile_score": 50, "posts": 0, "last_review_age": 14 },
+    { "name": "Jashan Event Services", "reviews": 58, "rating": 4.9, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 3, "profile_score": 50, "posts": 0, "last_review_age": 30 },
+    { "name": "National Event Pros", "reviews": 38, "rating": 4.8, "services": 34, "service_details": 4, "service_media": 0, "service_categories": 3, "attributes": 4, "profile_score": 70, "posts": 0, "last_review_age": 21 },
+    { "name": "Events Unlimited", "reviews": 0, "rating": null, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": null },
+    { "name": "Alexander Party Rentals", "reviews": 125, "rating": 4.3, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 4, "profile_score": 50, "posts": 0, "last_review_age": 14 },
+    { "name": "Eastside Event Rentals of Bellevue", "reviews": 102, "rating": 4.9, "services": 1, "service_details": 1, "service_media": 0, "service_categories": 0, "attributes": 6, "profile_score": 90, "posts": 4, "last_review_age": 0 },
+    { "name": "Platinum Designs Seattle", "reviews": 6, "rating": 5, "services": 3, "service_details": 2, "service_media": 0, "service_categories": 0, "attributes": 6, "profile_score": 80, "posts": 0, "last_review_age": 730 },
+    { "name": "Tents and Party Rents", "reviews": 32, "rating": 3.8, "services": 3, "service_details": 2, "service_media": 0, "service_categories": 0, "attributes": 4, "profile_score": 70, "posts": 0, "last_review_age": 0 },
+    { "name": "Elevate Event Rentals", "reviews": 89, "rating": 5, "services": 9, "service_details": 9, "service_media": 0, "service_categories": 1, "attributes": 4, "profile_score": 80, "posts": 0, "last_review_age": 3 },
+    { "name": "Bainbridge Events", "reviews": 54, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 5, "profile_score": 50, "posts": 0, "last_review_age": 21 },
+    { "name": "Eastside Event Rentals of Woodinville", "reviews": 24, "rating": 5, "services": 1, "service_details": 1, "service_media": 1, "service_categories": 0, "attributes": 11, "profile_score": 100, "posts": 0, "last_review_age": 21 },
+    { "name": "Stellar Event Rentals, Inc.", "reviews": 10, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": 730 },
+    { "name": "Grand Event Rentals", "reviews": 93, "rating": 4.5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 4, "profile_score": 60, "posts": 0, "last_review_age": 28 }
+  ]
+}

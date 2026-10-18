@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBJ La Tavola — Metrics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+  <body>
+    <nav class="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 gap-1 rounded-full bg-white p-1 shadow-[0_2px_12px_rgba(7,44,74,0.15)]">
+      <a href="single-location.html" class="fjk rounded-full px-4 py-2 text-[13px] font-semibold transition-colors bg-[#072C4A] text-[#FAFAFA]">Single Location</a>
+      <a href="all-locations.html" class="fjk rounded-full px-4 py-2 text-[13px] font-semibold transition-colors bg-transparent text-[#072C4A]">All Locations</a>
+    </nav>
+    <div class="bg-[#F7F7F7]">
+      <div class="relative mx-auto min-h-screen w-full max-w-[1440px] overflow-x-clip bg-[#F7F7F7]">
+        <header class="flex min-h-[82px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6 lg:flex-nowrap lg:pl-[52px] lg:pr-[52px]">
+          <a href="#" class="frub whitespace-nowrap text-[25px] font-medium tracking-tighter text-[#072C4A] no-underline">BBJ La Tavola</a>
+          <div class="hidden flex-row gap-2 lg:flex">
+            <a href="single-location.html" class="fjk flex h-[30px] items-center rounded-md px-3 text-[16px] font-semibold no-underline cursor-pointer bg-[#FAFAFA] shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors text-[#072C4A]/50 hover:text-[#072C4A]">Dashboard</a>
+            <a href="metrics.html" class="fjk flex h-[30px] items-center rounded-md px-3 text-[16px] font-semibold no-underline cursor-pointer bg-[#FAFAFA] shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors text-[#072C4A]">Metrics</a>
+          </div>
+          <label class="group ml-auto flex h-[39px] w-[clamp(150px,34vw,361px)] cursor-text items-center gap-3 rounded-[10px] bg-[#072C4A]/[0.04] px-[14px] shadow-none transition-shadow hover:shadow-[inset_0_0_0_1px_rgba(0,94,157,0.25)] focus-within:shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.6)]">
+            <input type="text" placeholder="Search" class="min-w-0 flex-1 border-0 bg-transparent text-[15px] font-medium text-[#072C4A] outline-hidden placeholder:text-[#072C4A]/60">
+            <i class="dc-icon i-search shrink-0 text-[#072C4A]/60 transition-colors group-hover:text-[#005E9D] group-focus-within:text-[#005E9D]" style="width:18px;height:18px"></i>
+          </label>
+          <i class="dc-icon i-settings ml-4 hidden shrink-0 cursor-pointer text-[#072C4A] opacity-70 transition-opacity hover:opacity-100 sm:inline-block lg:ml-[34px]" style="width:24px;height:24px"></i>
+          <i class="dc-icon i-info ml-3 hidden shrink-0 cursor-pointer text-[#072C4A] opacity-70 transition-opacity hover:opacity-100 sm:inline-block lg:ml-[20px]" style="width:24px;height:24px"></i>
+          <div class="ml-3 h-[44px] w-[44px] shrink-0 cursor-pointer overflow-hidden rounded-full border-[1.25px] border-[#072C4A]/35 lg:ml-[28px]">
+            <img src="assets/img/avatar.png" alt="User avatar" class="h-full w-full rounded-full object-cover">
+          </div>
+        </header>
+        <main class="flex flex-col gap-6 px-4 pb-[140px] sm:px-6 lg:px-[48px]">
+          <section class="w-full overflow-hidden rounded-2xl bg-white shadow-[0px_2px_4px_rgba(0,0,0,0.06)]">
+            <div class="flex flex-wrap items-start justify-between gap-4 px-6 pt-5 pb-3">
+              <div>
+                <h2 class="fjk text-[22px] font-bold tracking-[-0.01em] text-[#072C4A]">Daily Metrics</h2>
+                <p id="metrics-subtitle" class="mt-1 text-[14px] text-[#072C4A]/70"></p>
+              </div>
+              <div class="ml-auto flex max-w-full flex-nowrap justify-end gap-1.5 overflow-x-auto pb-1">
+                <button type="button" data-metric="reviews" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#005E9D] text-white">Reviews</button>
+                <button type="button" data-metric="rating" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Rating</button>
+                <button type="button" data-metric="services" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Services</button>
+                <button type="button" data-metric="service_details" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Service details</button>
+                <button type="button" data-metric="service_media" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Products</button>
+                <button type="button" data-metric="service_categories" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Service categories</button>
+                <button type="button" data-metric="attributes" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Attributes</button>
+                <button type="button" data-metric="profile_score" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Profile score</button>
+                <button type="button" data-metric="posts" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Posts/Updates</button>
+                <button type="button" data-metric="last_review_age" class="shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-semibold shadow-[inset_0_0_0_1.25px_rgba(0,94,157,0.25),0px_2px_4px_rgba(0,0,0,0.06)] transition-colors bg-[#FAFAFA] text-[#506A7F] hover:text-[#072C4A]">Last review age</button>
+              </div>
+            </div>
+            <div class="relative overflow-hidden bg-white px-4 pb-4 before:pointer-events-none before:absolute before:top-0 before:bottom-4 before:left-4 before:z-2 before:w-[332px] before:bg-white after:pointer-events-none after:absolute after:top-0 after:right-4 after:bottom-4 after:z-2 after:w-[80px] after:bg-white">
+              <div class="relative max-w-full overflow-x-auto overscroll-x-contain">
+                <table id="daily-metrics" class="w-max min-w-full border-separate border-spacing-0 text-[12px] leading-[normal] font-normal text-[#072C4A]"></table>
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+    <script type="application/json" id="metrics-data">
+{
+  "period": { "first": "2026-09-01", "last": "2026-10-08" },
+  "snapshots": { "first": "2026-09-11", "last": "2026-10-01" },
+  "profiles": [
+    { "name": "BBJ La Tavola - Seattle", "is_client": true, "reviews": 11, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 3, "profile_score": 50, "posts": 0, "last_review_age": 30 },
+    { "name": "Express Linen Rentals", "reviews": 6, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": 1460 },
+    { "name": "Pedersen's Event Rentals", "reviews": 63, "rating": 4.8, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 6, "profile_score": 50, "posts": 0, "last_review_age": 14 },
+    { "name": "Linen Sensation", "reviews": 8, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 3, "profile_score": 50, "posts": 0, "last_review_age": 1 },
+    { "name": "Adorn Event Rentals", "reviews": 11, "rating": 4.8, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 0, "profile_score": 30, "posts": 0, "last_review_age": 365 },
+    { "name": "A Tailored Affair", "reviews": 3, "rating": 2.3, "services": 1, "service_details": 1, "service_media": 0, "service_categories": 0, "attributes": 1, "profile_score": 60, "posts": 0, "last_review_age": 1095 },
+    { "name": "Globo Azul Events", "reviews": 28, "rating": 4.4, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": 365 },
+    { "name": "Hostess", "reviews": 1, "rating": 5, "services": 2, "service_details": 1, "service_media": 0, "service_categories": 1, "attributes": 1, "profile_score": 70, "posts": 0, "last_review_age": 270 },
+    { "name": "Pearl Studio", "reviews": 12, "rating": 4.7, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 40, "posts": 0, "last_review_age": 120 },
+    { "name": "TND Event Rentals and Supplies", "reviews": 73, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 5, "profile_score": 50, "posts": 0, "last_review_age": 14 },
+    { "name": "Jashan Event Services", "reviews": 58, "rating": 4.9, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 3, "profile_score": 50, "posts": 0, "last_review_age": 30 },
+    { "name": "National Event Pros", "reviews": 38, "rating": 4.8, "services": 34, "service_details": 4, "service_media": 0, "service_categories": 3, "attributes": 4, "profile_score": 70, "posts": 0, "last_review_age": 21 },
+    { "name": "Events Unlimited", "reviews": 0, "rating": null, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": null },
+    { "name": "Alexander Party Rentals", "reviews": 125, "rating": 4.3, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 4, "profile_score": 50, "posts": 0, "last_review_age": 14 },
+    { "name": "Eastside Event Rentals of Bellevue", "reviews": 102, "rating": 4.9, "services": 1, "service_details": 1, "service_media": 0, "service_categories": 0, "attributes": 6, "profile_score": 90, "posts": 4, "last_review_age": 0 },
+    { "name": "Platinum Designs Seattle", "reviews": 6, "rating": 5, "services": 3, "service_details": 2, "service_media": 0, "service_categories": 0, "attributes": 6, "profile_score": 80, "posts": 0, "last_review_age": 730 },
+    { "name": "Tents and Party Rents", "reviews": 32, "rating": 3.8, "services": 3, "service_details": 2, "service_media": 0, "service_categories": 0, "attributes": 4, "profile_score": 70, "posts": 0, "last_review_age": 0 },
+    { "name": "Elevate Event Rentals", "reviews": 89, "rating": 5, "services": 9, "service_details": 9, "service_media": 0, "service_categories": 1, "attributes": 4, "profile_score": 80, "posts": 0, "last_review_age": 3 },
+    { "name": "Bainbridge Events", "reviews": 54, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 5, "profile_score": 50, "posts": 0, "last_review_age": 21 },
+    { "name": "Eastside Event Rentals of Woodinville", "reviews": 24, "rating": 5, "services": 1, "service_details": 1, "service_media": 1, "service_categories": 0, "attributes": 11, "profile_score": 100, "posts": 0, "last_review_age": 21 },
+    { "name": "Stellar Event Rentals, Inc.", "reviews": 10, "rating": 5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 2, "profile_score": 50, "posts": 0, "last_review_age": 730 },
+    { "name": "Grand Event Rentals", "reviews": 93, "rating": 4.5, "services": 0, "service_details": 0, "service_media": 0, "service_categories": 0, "attributes": 4, "profile_score": 60, "posts": 0, "last_review_age": 28 }
+  ]
+}
+    </script>
+    <script type="module" src="/src/js/metrics.js"></script>
+  </body>
+</html>
