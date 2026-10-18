@@ -120,7 +120,7 @@ function renderCards() {
 
 // ---------- map with timeline ----------
 var root = document.getElementById('map-root'), tl = document.getElementById('map-timeline');
-var mapIdx = 0, statePaths = null;
+var mapIdx = 0, statePaths = null, stateLabels = null;
 function bestIn(abbr, i) {
   var b = null; LOCS.forEach(function (l) { if (l.st === abbr && (b === null || rank(l.hist[i]) < rank(b))) b = l.hist[i]; }); return b;
 }
@@ -229,6 +229,8 @@ function setMap(i) { mapIdx = i; renderTimeline(); paintMap(); }
 function paintMap() {
   if (!statePaths) return;
   statePaths.attr('fill', function (d) { var ab = NAME_TO_ABBR[d.properties.name]; var st = ab && bestIn(ab, mapIdx); return st ? COL[st] : NONE; });
+  // state code inside the shape: white on a status colour, muted navy on «No locations»
+  if (stateLabels) stateLabels.attr('fill', function (d) { var ab = NAME_TO_ABBR[d.properties.name]; return ab && bestIn(ab, mapIdx) ? '#FAFAFA' : 'rgba(7,44,74,0.45)'; });
 }
 
 if (root) {
@@ -243,8 +245,26 @@ function drawMap(d3, topojson, us) {
   var svg = d3.select(root).append('svg').attr('viewBox', '0 0 ' + W + ' ' + H).attr('width', '100%').attr('height', '100%').style('display', 'block').attr('role', 'img').attr('aria-label', 'Map of US states coloured by presence');
   var g = svg.append('g');
   var path = d3.geoPath();
-  statePaths = g.selectAll('path').data(states).join('path').attr('d', path).attr('stroke', '#fff').attr('stroke-width', 1).attr('fill', NONE).style('cursor', 'default').style('transition', 'fill .3s');
+  statePaths = g.append('g').selectAll('path').data(states).join('path').attr('d', path).attr('stroke', '#fff').attr('stroke-width', 1).attr('fill', NONE).style('cursor', 'default').style('transition', 'fill .3s');
   g.append('path').datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; })).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 1).attr('d', path).style('pointer-events', 'none');
+  // State codes; small north-east states get a navy callout to the right (VT above) with a leader line
+  var CALLOUT = { VT: [0, -34], NH: [52, -8], MA: [44, 0], RI: [36, 8], CT: [48, 22], NJ: [44, 4], DE: [40, 6], MD: [58, 22] };
+  var lg = g.append('g').style('pointer-events', 'none').attr('font-family', 'Inter, sans-serif').attr('font-weight', 600).attr('text-anchor', 'middle').attr('dominant-baseline', 'central');
+  var inside = states.filter(function (d) { var ab = NAME_TO_ABBR[d.properties.name]; return ab && ab !== 'DC' && !CALLOUT[ab] && isFinite(path.centroid(d)[0]); });
+  stateLabels = lg.selectAll('text.st').data(inside).join('text').attr('class', 'st').attr('font-size', 11)
+    .attr('x', function (d) { return labelAt(d)[0]; }).attr('y', function (d) { return labelAt(d)[1]; })
+    .text(function (d) { return NAME_TO_ABBR[d.properties.name]; });
+  states.forEach(function (d) {
+    var ab = NAME_TO_ABBR[d.properties.name], off = ab && CALLOUT[ab]; if (!off) return;
+    var c = path.centroid(d), x = c[0] + off[0], y = c[1] + off[1];
+    lg.append('line').attr('x1', c[0]).attr('y1', c[1]).attr('x2', off[0] ? x - 9 : x).attr('y2', off[0] ? y : y + 6).attr('stroke', C.navy).attr('stroke-width', 0.6);
+    lg.append('text').attr('x', x + (off[0] ? 4 : 0)).attr('y', y).attr('font-size', 10).attr('fill', C.navy).text(ab);
+  });
+  function labelAt(d) {
+    var ab = NAME_TO_ABBR[d.properties.name], c = path.centroid(d);
+    var nudge = { FL: [10, 0], LA: [-10, -4], MI: [10, 18], ID: [0, 16], KY: [8, 2], HI: [0, 0], AK: [0, 0] }[ab];
+    return nudge ? [c[0] + nudge[0], c[1] + nudge[1]] : c;
+  }
   var pop = document.createElement('div');
   pop.style.cssText = 'position:absolute;z-index:3;display:none;pointer-events:none;min-width:220px;max-width:300px;border-radius:10px;background:#fff;box-shadow:0 0 0 1px rgba(0,94,157,0.15),0 8px 24px rgba(7,44,74,0.14);padding:10px 12px;font-family:Inter,sans-serif;font-size:12px;color:' + C.navy;
   root.appendChild(pop);
