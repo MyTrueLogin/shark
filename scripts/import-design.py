@@ -37,7 +37,7 @@ ICONS = {
 
 PAGES = {
     'all-locations': ['info-tips', 'network'],
-    'single-location': ['info-tips', 'trends', 'rank-switch', 'competitors'],
+    'single-location': ['info-tips', 'trends', 'competitors'],
     'metrics': ['metrics'],
     'onboarding': [],
 }
@@ -122,6 +122,10 @@ def convert(page, modules):
         html = html.replace('<div id="map-timeline" class="mt-4 mb-3 px-2">', '<div id="map-timeline" class="mt-5 mb-3 px-2">', 1)
 
     if page == 'single-location':
+        # Rank placement: лишаємо варіант A (Same row, wraps) — без перемикача й без варіантів B/C
+        html = re.sub(r'\n\s*<div id="rank-var-switch"[^\n]*', '', html, count=1)
+        html = re.sub(r'\n\s*<div data-rank-var="[bc]"[^\n]*', '', html)
+        html = html.replace('<div data-rank-var="a" class=', '<div class=', 1)
         # Блок «Trends» (згортуваний) прибрано; trends.js пропускає його, якщо #trends-block немає
         html = re.sub(r'\n\s*<section id="trends-block".*?</section>', '', html, count=1, flags=re.S)
         # Nearest / All Competitors: кольори статусів (як у Leaderboard і на карті) замість відтінків синього,
