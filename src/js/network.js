@@ -449,6 +449,31 @@ function marketHtml(l, startIdx) {
     tile('Standing', 'Top ' + top + '%', '<span style="font-size:13px;color:' + C.muted + '">of ' + mk.size + ' businesses</span>') +
     '</div>';
 }
+// Status history for the chart period: a strip coloured by status (width ∝ time) and only the moments
+// the status changed — compact for any period length.
+function statusHistoryHtml(l, startIdx) {
+  var runs = [];
+  for (var k = startIdx; k <= NOW; k++) {
+    var st = l.hist[k], last = runs[runs.length - 1];
+    if (last && last.st === st) last.to = k; else runs.push({ st: st, from: k, to: k });
+  }
+  var span = Math.max(1, STOPS[startIdx].days);
+  var strip = runs.map(function (r, i) {
+    var end = i < runs.length - 1 ? STOPS[runs[i + 1].from].days : 0, w = Math.max(2, (STOPS[r.from].days - end) / span * 100);
+    return '<span title="' + LBL[r.st] + ' · ' + fmtStopDate(STOPS[r.from].days, false) + ' – ' + (end ? fmtStopDate(end, false) : 'today') + '" style="flex:' + w + ' 1 0;min-width:6px;background:' + COL[r.st] + '"></span>';
+  }).join('');
+  var events = runs.length < 2
+    ? '<span style="font-size:13px;color:' + C.muted + '">' + badge(runs[0].st, 1) + ' the whole period, no status changes</span>'
+    : runs.slice(1).map(function (r, i) {
+        var up = rank(r.st) < rank(runs[i].st);
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="min-width:92px;color:' + C.muted + '">' + (r.from === NOW ? 'Today' : fmtStopDate(STOPS[r.from].days, false)) + '</span>' + badge(runs[i].st, 1) + '<span style="color:' + (up ? '#047857' : '#A2281B') + '">→</span>' + badge(r.st, 1) + '</div>';
+      }).join('');
+  return '<h3 style="' + FJK + 'margin:0 0 4px;font-size:16px;font-weight:700">Status history</h3>' +
+    '<p style="margin:0 0 10px;font-size:12px;color:' + C.muted + '">' + STOPS[startIdx].date + ' → ' + STOPS[NOW].date + ', the period shown on the chart</p>' +
+    '<div style="display:flex;gap:2px;height:10px;border-radius:999px;overflow:hidden;margin-bottom:6px">' + strip + '</div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px;color:' + C.muted + ';margin-bottom:12px"><span>' + fmtStopDate(STOPS[startIdx].days, false) + '</span><span>Today</span></div>' +
+    '<div style="display:flex;flex-direction:column;gap:8px">' + events + '</div>';
+}
 function fmt(d) { var x = new Date(TODAY); x.setDate(x.getDate() + d); return x.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 var modal = document.createElement('div');
 modal.style.cssText = 'position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(7,44,74,0.4);padding:16px';
@@ -473,7 +498,7 @@ function renderM() {
   h += '<div style="position:relative;height:260px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,94,157,0.15);padding:16px 16px 8px"><canvas aria-label="Performance chart" role="img"></canvas></div>';
   h += '<div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 22px;font-size:12px;color:' + C.muted + '"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:3px;border-radius:2px;background:' + C.navy + '"></span>' + l.name + '</span><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed #9AB0C2"></span>Network average</span></div>';
   h += marketHtml(l, startIdx);
-  h += '<h3 style="' + FJK + 'margin:0 0 10px;font-size:16px;font-weight:700">Status history</h3><p style="margin:-6px 0 10px;font-size:12px;color:' + C.muted + '">' + STOPS[startIdx].date + ' → ' + STOPS[NOW].date + ', the period shown on the chart</p><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">' + STOPS.slice(startIdx, NOW + 1).map(function (st, j) { var k = startIdx + j; return (j ? '<span style="color:' + C.muted + '">→</span>' : '') + '<span style="display:flex;flex-direction:column;gap:4px;align-items:flex-start"><span style="font-size:11px;color:' + C.muted + '">' + st.label + '</span>' + badge(l.hist[k]) + '</span>'; }).join('') + '</div>';
+  h += statusHistoryHtml(l, startIdx);
   mscroll.innerHTML = h;
   mscroll.querySelectorAll('[data-mp]').forEach(function (b) { b.onclick = function () { mState.k = +b.dataset.mp; renderM(); }; });
   var cv = mscroll.querySelector('canvas');
