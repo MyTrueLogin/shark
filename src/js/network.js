@@ -46,6 +46,7 @@ function changes(i) {
 }
 function badge(st, small) { return '<span style="display:inline-flex;align-items:center;white-space:nowrap;border-radius:999px;padding:' + (small ? '2px 8px' : '3px 10px') + ';font-size:12px;color:#FAFAFA;background:' + COL[st] + '">' + LBL[st] + '</span>'; }
 var UP = '<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1.5 9 7.5H1z" fill="currentColor"/></svg>';
+var CAL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
 var DN = '<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 8.5 1 2.5h8z" fill="currentColor"/></svg>';
 function chipHtml(d, unit) {
   var t = d > 0 ? GOOD : d < 0 ? BAD : FLAT;
@@ -138,7 +139,13 @@ function renderTimeline() {
   var A = rangeA, B = rangeB, SPAN = Math.max(1, STOPS[0].days - STOPS[NOW].days);
   var fr = function (k) { return (STOPS[0].days - STOPS[k].days) / SPAN; }, pos = function (k) { return (fr(k) * 100) + '%'; };
   var ch = changesBetween(A, B), active = mapIdx === A ? 'a' : 'b';
-  var dateBtn = function (k, which) { var on = which === active; return '<button type="button" data-pick="' + which + '" style="border:0;background:transparent;padding:0;cursor:pointer;' + FJK + 'font-size:16px;font-weight:700;color:' + (on ? C.navy : C.muted) + ';text-decoration:' + (on ? 'underline' : 'none') + ';text-underline-offset:4px">' + (k === NOW ? 'Today' : STOPS[k].date) + '</button>'; };
+  // date in the header: click opens a date picker (hidden <input type="date">), the chosen date snaps to the nearest stop
+  var isoOf = function (k) { var d = new Date(TODAY); d.setDate(d.getDate() - STOPS[k].days); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  var dateBtn = function (k, which) {
+    var on = which === active, min = which === 'a' ? 0 : A + 1, max = which === 'a' ? B - 1 : NOW;
+    return '<span style="position:relative;display:inline-flex"><button type="button" data-pick="' + which + '" title="Pick a date" style="display:inline-flex;align-items:center;gap:6px;border:0;border-radius:8px;background:' + (on ? C.soft : 'transparent') + ';padding:2px 8px;cursor:pointer;' + FJK + 'font-size:16px;font-weight:700;color:' + (on ? C.navy : C.muted) + '">' + (k === NOW ? 'Today' : STOPS[k].date) + CAL + '</button>'
+      + '<input type="date" data-date="' + which + '" tabindex="-1" aria-label="' + (which === 'a' ? 'Period start' : 'Period end') + '" min="' + isoOf(min) + '" max="' + isoOf(max) + '" value="' + isoOf(k) + '" style="position:absolute;left:0;bottom:0;width:100%;height:0;padding:0;border:0;opacity:0;pointer-events:none"></span>';
+  };
   var h = '<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px">';
   h += '<div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px"><span style="font-size:13px;color:' + C.muted + '">Market from</span>' + dateBtn(A, 'a') + '<span style="color:' + C.muted + '">→</span>' + dateBtn(B, 'b') + '</div>';
   h += '<span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px"><span style="display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;background:' + GOOD.bg + ';color:' + GOOD.fg + ';font-weight:600;white-space:nowrap">' + UP + ch.up.length + ' improved</span><span style="display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;background:' + BAD.bg + ';color:' + BAD.fg + ';font-weight:600;white-space:nowrap">' + DN + ch.down.length + ' declined</span></span>';
@@ -197,7 +204,21 @@ function renderTimeline() {
       tl.querySelector('[data-handle="' + w + '"]').focus({ preventScroll: true });
     };
   });
-  tl.querySelectorAll('[data-pick]').forEach(function (b) { b.onclick = function () { mapIdx = b.dataset.pick === 'a' ? rangeA : rangeB; renderTimeline(); paintMap(); }; });
+  tl.querySelectorAll('[data-pick]').forEach(function (b) {
+    b.onclick = function () {
+      var w = b.dataset.pick, input = tl.querySelector('[data-date="' + w + '"]');
+      if (mapIdx !== (w === 'a' ? rangeA : rangeB)) { mapIdx = w === 'a' ? rangeA : rangeB; paintMap(); }
+      try { input.showPicker(); } catch (e) { input.style.pointerEvents = 'auto'; input.focus(); input.click(); }
+    };
+  });
+  tl.querySelectorAll('[data-date]').forEach(function (input) {
+    input.onchange = function () {
+      if (!input.value) return;
+      var days = Math.round((TODAY - new Date(input.value + 'T00:00:00')) / 864e5), best = 0;
+      STOPS.forEach(function (st, k) { if (Math.abs(st.days - days) < Math.abs(STOPS[best].days - days)) best = k; });
+      setPoint(input.dataset.date, best);
+    };
+  });
   tl.querySelectorAll('[data-stop]').forEach(function (b) { b.onclick = function () { var k = +b.dataset.stop; setPoint(nearer(k), k); }; });
 }
 function clampN(v, a, b) { return Math.max(a, Math.min(b, v)); }

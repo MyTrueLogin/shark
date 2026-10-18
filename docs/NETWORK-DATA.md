@@ -27,4 +27,5 @@ All Locations builds Status changes, the map timeline, map colours and the leade
 The timeline has two draggable points — the start and the end of the compared period (any stop to any stop;
 with weekly stops the step is one week). Drag a point, click the track (the nearer point jumps there), click a caption,
 or focus a point and use the arrow keys. The chips show how many locations improved / declined from start to end;
-the map shows the market on the point moved last (click a date in the header to switch). Default — the whole range.
+the map shows the market on the point moved last. Clicking a date in the header opens a date picker for that point
+(the date snaps to the nearest stop). Default — the whole range.
