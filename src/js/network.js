@@ -447,8 +447,7 @@ function marketStats(mk) {
     '<span>Top <b style="' + RUB + 'font-weight:600;color:' + C.navy + '">' + top + '%</b> of the local market</span>' +
     (mk.href ? '<a href="' + mk.href + '" style="margin-left:auto;font-size:12px;font-weight:600;color:' + C.blue + ';text-decoration:none">Open local market →</a>' : '') + '</div>';
 }
-// Status history for the chart period: a strip coloured by status (width ∝ time) and only the moments
-// the status changed — compact for any period length.
+// Status history for the chart period: a strip coloured by status (width ∝ time); hover a part for its dates.
 function statusHistoryHtml(l, startIdx) {
   var runs = [];
   for (var k = startIdx; k <= NOW; k++) {
@@ -458,19 +457,12 @@ function statusHistoryHtml(l, startIdx) {
   var span = Math.max(1, STOPS[startIdx].days);
   var strip = runs.map(function (r, i) {
     var end = i < runs.length - 1 ? STOPS[runs[i + 1].from].days : 0, w = Math.max(2, (STOPS[r.from].days - end) / span * 100);
-    return '<span title="' + LBL[r.st] + ' · ' + fmtStopDate(STOPS[r.from].days, false) + ' – ' + (end ? fmtStopDate(end, false) : 'today') + '" style="flex:' + w + ' 1 0;min-width:6px;background:' + COL[r.st] + '"></span>';
+    return '<span title="' + LBL[r.st] + ' · ' + fmtStopDate(STOPS[r.from].days, false) + ' – ' + (end ? fmtStopDate(end, false) : 'today') + '" style="flex:' + w + ' 1 0;min-width:6px;display:flex;align-items:center;overflow:hidden;padding:0 ' + (w >= 12 ? 8 : 0) + 'px;font-size:11px;font-weight:600;color:#FAFAFA;white-space:nowrap;background:' + COL[r.st] + '">' + (w >= 12 ? LBL[r.st] : '') + '</span>';
   }).join('');
-  var events = runs.length < 2
-    ? '<span style="font-size:13px;color:' + C.muted + '">' + badge(runs[0].st, 1) + ' the whole period, no status changes</span>'
-    : runs.slice(1).map(function (r, i) {
-        var up = rank(r.st) < rank(runs[i].st);
-        return '<div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="min-width:92px;color:' + C.muted + '">' + (r.from === NOW ? 'Today' : fmtStopDate(STOPS[r.from].days, false)) + '</span>' + badge(runs[i].st, 1) + '<span style="color:' + (up ? '#047857' : '#A2281B') + '">→</span>' + badge(r.st, 1) + '</div>';
-      }).join('');
   return '<h3 style="' + FJK + 'margin:0 0 4px;font-size:16px;font-weight:700">Status history</h3>' +
     '<p style="margin:0 0 10px;font-size:12px;color:' + C.muted + '">' + STOPS[startIdx].date + ' → ' + STOPS[NOW].date + ', the period shown on the chart</p>' +
-    '<div style="display:flex;gap:2px;height:10px;border-radius:999px;overflow:hidden;margin-bottom:6px">' + strip + '</div>' +
-    '<div style="display:flex;justify-content:space-between;font-size:11px;color:' + C.muted + ';margin-bottom:12px"><span>' + fmtStopDate(STOPS[startIdx].days, false) + '</span><span>Today</span></div>' +
-    '<div style="display:flex;flex-direction:column;gap:8px">' + events + '</div>';
+    '<div style="display:flex;gap:2px;height:20px;border-radius:6px;overflow:hidden;margin-bottom:6px">' + strip + '</div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px;color:' + C.muted + '"><span>' + fmtStopDate(STOPS[startIdx].days, false) + '</span><span>Today</span></div>';
 }
 function fmt(d) { var x = new Date(TODAY); x.setDate(x.getDate() + d); return x.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 var modal = document.createElement('div');
