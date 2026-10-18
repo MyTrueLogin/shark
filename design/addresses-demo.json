@@ -1,0 +1,42 @@
+{
+  "_note": "Placeholder addresses for the leaderboard Address column (demo only, except Seattle from the design). Replace with addresses from the API.",
+  "all-locations": {
+    "BBJ La Tavola - Seattle": "5628 Airport Wy S #110, Seattle, WA 98108",
+    "BBJ La Tavola - Niles (Headquarters)": "7030 N Austin Ave, Niles, IL 60714",
+    "BBJ La Tavola - Denver": "4800 Race St, Denver, CO 80216",
+    "BBJ La Tavola - Las Vegas": "6250 S Arville St, Las Vegas, NV 89118",
+    "BBJ La Tavola - Dallas": "2410 Converse St, Dallas, TX 75207",
+    "BBJ La Tavola - Atlanta": "1100 Huff Rd NW, Atlanta, GA 30318",
+    "BBJ La Tavola - Beverly Hills": "8600 Wilshire Blvd, Beverly Hills, CA 90211",
+    "BBJ La Tavola - Milwaukee": "330 E Menomonee St, Milwaukee, WI 53202",
+    "BBJ La Tavola - Orlando": "2600 Silver Star Rd, Orlando, FL 32804",
+    "BBJ La Tavola - Scottsdale": "7340 E Shoeman Ln, Scottsdale, AZ 85251",
+    "BBJ La Tavola - Boston": "45 Dorchester Ave, Boston, MA 02127",
+    "BBJ La Tavola - Charleston": "1650 Meeting Street Rd, Charleston, SC 29405",
+    "BBJ La Tavola - Nashville": "910 Main St, Nashville, TN 37206",
+    "BBJ La Tavola - Santa Barbara": "120 S Salsipuedes St, Santa Barbara, CA 93103"
+  },
+  "single-location": {
+    "Eastside Event Rentals of Bellevue": "1810 132nd Ave NE, Bellevue, WA 98005",
+    "Elevate Event Rentals": "18300 Cascade Ave S, Tukwila, WA 98188",
+    "Eastside Event Rentals of Woodinville": "14200 NE 190th St, Woodinville, WA 98072",
+    "TND Event Rentals and Supplies": "1020 SW 34th St, Renton, WA 98057",
+    "Grand Event Rentals": "7700 S 212th St, Kent, WA 98032",
+    "Bainbridge Events": "450 Winslow Way E, Bainbridge Island, WA 98110",
+    "Alexander Party Rentals": "12500 Aurora Ave N, Seattle, WA 98133",
+    "Jashan Event Services": "3600 S 180th St, SeaTac, WA 98188",
+    "Pedersen's Event Rentals": "5500 4th Ave S, Seattle, WA 98108",
+    "National Event Pros": "1400 Dexter Ave N, Seattle, WA 98109",
+    "BBJ La Tavola - Seattle": "5628 Airport Wy S #110, Seattle, WA 98108",
+    "Tents and Party Rents": "21000 72nd Ave S, Kent, WA 98032",
+    "Linen Sensation": "6000 Corson Ave S, Seattle, WA 98108",
+    "A Tailored Affair": "4100 Rainier Ave S, Seattle, WA 98118",
+    "Adorn Event Rentals": "8700 Rainier Ave S, Seattle, WA 98118",
+    "Express Linen Rentals": "5900 1st Ave S, Seattle, WA 98108",
+    "Globo Azul Events": "2200 S Jackson St, Seattle, WA 98144",
+    "Hostess": "700 S Dearborn St, Seattle, WA 98134",
+    "Pearl Studio": "3900 Stone Way N, Seattle, WA 98103",
+    "Platinum Designs Seattle": "11000 NE 8th St, Bellevue, WA 98004",
+    "Stellar Event Rentals, Inc.": "19800 144th Ave NE, Woodinville, WA 98072"
+  }
+}

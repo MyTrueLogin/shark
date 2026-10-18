@@ -149,6 +149,9 @@ def convert(page, modules):
         html = re.sub(r'<img src="assets/img/donut-(nearest|tracking)\.png" alt="([^"]+)" class="absolute inset-0 block h-full w-full">',
                       r'<canvas data-donut="\1" role="img" aria-label="\2" class="absolute inset-0 block h-full w-full"></canvas>', html)
 
+    if page in ('all-locations', 'single-location'):
+        html = leaderboard_address(html, page)
+
     # Підказки «i» — усі одного вигляду (варіант «corner» для Reputation більше не потрібен)
     html = html.replace(' data-tip="corner"', '')
 
@@ -162,6 +165,37 @@ def convert(page, modules):
     html = html.replace('  </body>', tags + '  </body>', 1)
     (ROOT / f'{page}.html').write_text(html)
     print('wrote', page + '.html')
+
+
+def leaderboard_address(html, page):
+    """Leaderboard column «Address» (demo addresses from design/addresses-demo.json):
+    All Locations — instead of Last Review; Single Location — after Last Review."""
+    import json
+    addr = json.loads((ROOT / 'design' / 'addresses-demo.json').read_text())[page]
+    start = html.index('>Last Review</th>')
+    head, body = html[:start], html[start:]
+    th = '>Address</th>'
+    cell = lambda a: '<td class="px-4 py-4"><span class="block min-w-[180px] max-w-[240px] text-[13px] leading-[1.35] text-[#072C4A]/80">' + a + '</span></td>'
+    date = r'<td class="px-4 py-4"><span class="inline-flex whitespace-nowrap rounded-full border border-\[#BDC6CE\] px-3\.5 py-1 text-\[12px\] text-\[#072C4A\]">[^<]*</span></td>'
+
+    def row(m):
+        tr = m.group(0)
+        name = re.search(r'<a href="#" class="fjk text-\[15px\][^>]*>([^<]+)</a>', tr)
+        if not name:
+            return tr
+        a = addr.get(name.group(1).replace('&#x27;', "'").replace('&amp;', '&'), '')
+        if page == 'all-locations':
+            return re.sub(date, lambda d: cell(a), tr, count=1)
+        return re.sub(date, lambda d: d.group(0) + '\n                    ' + cell(a), tr, count=1)
+
+    body = re.sub(r'<tr tabindex="0" role="link".*?</tr>', row, body, flags=re.S)
+    if page == 'all-locations':
+        body = body.replace('>Last Review</th>', th, 1)
+    else:
+        body = re.sub(r'(>Last Review</th>)', r'\1\n                    <th class="whitespace-nowrap px-4 py-3 font-normal">Address</th>', body, count=1)
+        body = body.replace('colspan="8"', 'colspan="9"')
+        head = head.replace('min-w-[980px] border-separate', 'min-w-[1180px] border-separate')
+    return head + body
 
 
 def metrics_shell(html):
