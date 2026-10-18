@@ -105,12 +105,13 @@ function renderPeriod() {
 function renderCards() {
   document.querySelectorAll('[data-card]').forEach(function (el) {
     var st = el.dataset.card, then = LOCS.filter(function (l) { return l.hist[PERIOD] === st; }).length, now = LOCS.filter(function (l) { return l.hist[NOW] === st; }).length, d = now - then;
-    var good = st === 'weak' || st === 'sleeping' ? -d : d, t = d === 0 ? FLAT : good > 0 ? GOOD : BAD;
+    var good = st === 'weak' || st === 'sleeping' ? -d : d, t = good > 0 ? GOOD : BAD;
     var old = el.querySelector('[data-card-chip]'); if (old) old.remove();
+    if (d === 0) return; // no change — no indicator (as on Single Location: only up or down)
     var c = document.createElement('span'); c.dataset.cardChip = '';
     c.title = 'vs ' + STOPS[PERIOD].date + ' (' + then + ' then)';
     c.style.cssText = 'display:inline-flex;align-items:center;gap:3px;height:24px;margin-bottom:12px;padding:0 8px;border-radius:999px;' + RUB + 'font-size:13px;font-weight:500;line-height:1;white-space:nowrap;background:' + t.bg + ';color:' + t.fg;
-    c.innerHTML = (d > 0 ? UP : d < 0 ? DN : '±') + Math.abs(d);
+    c.innerHTML = (d > 0 ? UP : DN) + Math.abs(d);
     el.appendChild(c);
   });
 }
