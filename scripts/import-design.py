@@ -90,6 +90,11 @@ def convert(page, modules):
     if page == 'all-locations':
         # Блок «Status changes» поки прибрано (network.js пропускає його, якщо #status-changes немає)
         html = re.sub(r'\s*<section id="status-changes"[^>]*></section>', '', html)
+        # Картка Strong — виділена синім і з назвою «Strong Presence» (як у робочій версії)
+        html = html.replace('rounded-2xl bg-[#FAFAFA] shadow-[inset_0_0_0_1.3px_rgba(0,94,157,0.25)]">',
+                            'rounded-2xl bg-[#B9E3FE] shadow-[inset_0_0_0_1.3px_rgba(7,44,74,0.25)]">', 1)
+        html = html.replace('text-[#072C4A]">Strong</span><button type="button" data-info="strong"',
+                            'text-[#072C4A]">Strong Presence</span><button type="button" data-info="strong"', 1)
         # Легенда карти (Strong / Average / Weak / Sleeping presence, No locations) — над картою, під таймлайном
         legend = re.search(r'\n\s*<div class="flex flex-wrap items-center gap-x-6 gap-y-2 px-6 pb-5 pt-1">.*?</div>', html, flags=re.S)
         html = html.replace(legend.group(0), '', 1)
