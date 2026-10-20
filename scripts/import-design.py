@@ -96,13 +96,13 @@ def convert(page, modules):
         html = html.replace('text-[#072C4A]">Strong</span><button type="button" data-info="strong"',
                             'text-[#072C4A]">Strong Presence</span><button type="button" data-info="strong"', 1)
         # Картки статусів: без «N of 14 locations · N states» (і без кнопки «View locations»);
-        # загальна кількість локацій — квадратиком перед заголовком «All Locations»
+        # кількість локацій — у заголовку: «14 Locations» замість «All Locations»
         total = re.search(r'\d+ of (\d+) locations · \d+ states', html).group(1)
         html = re.sub(r'\n\s*<span class="absolute left-4 top-\[190px\][^>]*>\d+ of \d+ locations · \d+ states</span>', '', html)
-        html = html.replace('<h1 class="frub text-[32px] font-semibold tracking-[-0.03em] text-[#072C4A]">All Locations</h1>',
-                            '<h1 class="frub flex items-center gap-3 text-[32px] font-semibold tracking-[-0.03em] text-[#072C4A]">'
-                            '<span title="Locations tracked" class="inline-flex h-[34px] min-w-[34px] items-center justify-center rounded-lg bg-[#F0F8FF] px-2 text-[18px] font-medium tracking-normal text-[#005E9D] shadow-[inset_0_0_0_1px_rgba(0,94,157,0.2)]">'
-                            + total + '</span>All Locations</h1>', 1)
+        html = html.replace('tracking-[-0.03em] text-[#072C4A]">All Locations</h1>', 'tracking-[-0.03em] text-[#072C4A]">' + total + ' Locations</h1>', 1)
+        html = html.replace('Your business performance across every market', 'Your business performance across every local market', 1)
+        # Один віджет дат — таймлайн карти («Market from … → …»); «Compare with» прибрано
+        html = re.sub(r'\n\s*<div id="period-bar"[^>]*></div>', '', html, count=1)
 
         # Без рядка з кількістю картки нижчі: контент закінчується на ~175 px, панель 199 px + футер
         html = html.replace('<article class="relative h-[271px] ', '<article class="relative h-[235px] ')
@@ -131,6 +131,9 @@ def convert(page, modules):
         html = html.replace('<div id="map-timeline" class="mt-4 mb-3 px-2">', '<div id="map-timeline" class="mt-5 mb-3 px-2">', 1)
 
     if page == 'single-location':
+        # Ключові слова — менші, в пропорції до підпису «Keywords»
+        html = html.replace('<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[15px] font-medium text-[#072C4A]"><span>linen',
+                            '<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] font-medium text-[#072C4A]"><span>linen', 1)
         # Rank placement: лишаємо варіант A (Same row, wraps) — без перемикача й без варіантів B/C
         html = re.sub(r'\n\s*<div id="rank-var-switch"[^\n]*', '', html, count=1)
         html = re.sub(r'\n\s*<div data-rank-var="[bc]"[^\n]*', '', html)

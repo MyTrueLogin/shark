@@ -1,6 +1,6 @@
-// All Locations: Status changes (if #status-changes is on the page), «Compare with» period bar, card change chips,
-// US map with a timeline where two draggable points set the compared period,
-// leaderboard change chips and the per-location trend modal.
+// All Locations: US map with a timeline where two draggable points set the compared period — the page's only
+// date widget: status cards, leaderboard chips and the trend modal follow it. Also Status changes and the
+// «Compare with» bar when #status-changes / #period-bar are on the page (both removed for now).
 // Data contract: see docs/NETWORK-DATA.md. Pass data either via
 //   <script type="application/json" id="network-data">…</script>  or  window.SharkNetwork.setData(data)
 import { loadChart } from './chart.js'
@@ -107,12 +107,13 @@ function renderPeriod() {
 }
 function renderCards() {
   document.querySelectorAll('[data-card]').forEach(function (el) {
-    var st = el.dataset.card, then = LOCS.filter(function (l) { return l.hist[PERIOD] === st; }).length, now = LOCS.filter(function (l) { return l.hist[NOW] === st; }).length, d = now - then;
+    var st = el.dataset.card, then = LOCS.filter(function (l) { return l.hist[rangeA] === st; }).length, now = LOCS.filter(function (l) { return l.hist[rangeB] === st; }).length, d = now - then;
+    var num = el.querySelector('span'); if (num) num.textContent = now;
     var good = st === 'weak' || st === 'sleeping' ? -d : d, t = good > 0 ? GOOD : BAD;
     var old = el.querySelector('[data-card-chip]'); if (old) old.remove();
     if (d === 0) return; // no change — no indicator (as on Single Location: only up or down)
     var c = document.createElement('span'); c.dataset.cardChip = '';
-    c.title = 'vs ' + STOPS[PERIOD].date + ' (' + then + ' then)';
+    c.title = 'vs ' + STOPS[rangeA].date + ' (' + then + ' then)';
     c.style.cssText = 'display:inline-flex;align-items:center;gap:3px;height:24px;margin-bottom:12px;padding:0 8px;border-radius:999px;' + RUB + 'font-size:13px;font-weight:500;line-height:1;white-space:nowrap;background:' + t.bg + ';color:' + t.fg;
     c.innerHTML = (d > 0 ? UP : DN) + Math.abs(d);
     el.appendChild(c);
@@ -133,10 +134,16 @@ function changesBetween(i, j) {
   LOCS.forEach(function (l) { var a = rank(l.hist[i]), b = rank(l.hist[j]); if (b < a) up.push(l); else if (b > a) down.push(l); });
   return { up: up, down: down };
 }
+// the map timeline is the page's only date widget: status cards, leaderboard chips and the trend modal
+// follow its range (rangeA → rangeB); PERIOD is the modal preset closest to the range start
+function syncPeriod() {
+  if (!KEYS.length) return;
+  PERIOD = KEYS.reduce(function (b, k) { return Math.abs(STOPS[k].days - STOPS[rangeA].days) < Math.abs(STOPS[b].days - STOPS[rangeA].days) ? k : b; }, KEYS[0]);
+}
 function setPoint(which, k) {
   if (which === 'a') rangeA = clampN(k, 0, rangeB - 1); else rangeB = clampN(k, rangeA + 1, NOW);
   mapIdx = which === 'a' ? rangeA : rangeB;
-  renderTimeline(); paintMap();
+  syncPeriod(); renderTimeline(); paintMap(); renderCards(); paintLeaderboard();
 }
 function renderTimeline() {
   if (!tl) return;
@@ -250,7 +257,7 @@ function drawMap(d3, topojson, us) {
   statePaths = g.append('g').selectAll('path').data(states).join('path').attr('d', path).attr('stroke', '#fff').attr('stroke-width', 1).attr('fill', NONE).style('cursor', 'default').style('transition', 'fill .3s');
   g.append('path').datum(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; })).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 1).attr('d', path).style('pointer-events', 'none');
   // hover outline: its own path above the white borders, so the whole stroke is visible (blue, round joins)
-  var hl = g.append('path').attr('fill', 'none').attr('stroke', C.blue).attr('stroke-width', 2).attr('stroke-linejoin', 'round').style('pointer-events', 'none').style('display', 'none');
+  var hl = g.append('path').attr('fill', 'none').attr('stroke', C.navy).attr('stroke-width', 2).attr('stroke-linejoin', 'round').style('pointer-events', 'none').style('display', 'none');
   // State codes; small north-east states get a navy callout to the right (VT above) with a leader line
   var CALLOUT = { VT: [0, -34], NH: [52, -8], MA: [44, 0], RI: [36, 8], CT: [48, 22], NJ: [44, 4], DE: [40, 6], MD: [58, 22] };
   var lg = g.append('g').style('pointer-events', 'none').attr('font-family', 'Inter, sans-serif').attr('font-weight', 600).attr('text-anchor', 'middle').attr('dominant-baseline', 'central');
@@ -270,21 +277,8 @@ function drawMap(d3, topojson, us) {
     return nudge ? [c[0] + nudge[0], c[1] + nudge[1]] : c;
   }
   var pop = document.createElement('div');
-  pop.style.cssText = 'position:absolute;z-index:3;display:none;pointer-events:none;min-width:220px;max-width:300px;border-radius:10px;background:#fff;box-shadow:0 0 0 1px rgba(0,94,157,0.15),0 8px 24px rgba(7,44,74,0.14);padding:10px 12px;font-family:Inter,sans-serif;font-size:12px;color:' + C.navy;
+  pop.style.cssText = 'position:absolute;z-index:3;display:none;pointer-events:none;max-width:300px;white-space:nowrap;border-radius:10px;background:#fff;box-shadow:0 0 0 1px rgba(0,94,157,0.15),0 8px 24px rgba(7,44,74,0.14);padding:10px 12px;font-family:Inter,sans-serif;font-size:12px;color:' + C.navy;
   root.appendChild(pop);
-  function why(l, i) {
-    var st = l.hist[i], p = l.perf[i], prev = i > 0 ? l.perf[i - 1] : null;
-    var trend = prev === null ? '' : p > prev ? ' Up from ' + prev + '% a week earlier.' : p < prev ? ' Down from ' + prev + '% a week earlier.' : '';
-    if (p === 0) return ['No tracking data yet, so the location shows as Sleeping.', 'Check that the Google Business Profile is verified and linked to Shark.'];
-    if (st === 'sleeping') return ['Rarely appears in Google Maps for your keywords (Performance ' + p + '%).' + trend, 'Add the main keywords to the profile categories and description, and post weekly.'];
-    if (st === 'weak') return ['Shows in only a few parts of the area; nearby competitors rank above it (Performance ' + p + '%).' + trend, 'Collect new reviews and add fresh photos to climb above the local leaders.'];
-    if (st === 'average') return ['Visible in parts of the area, but below the leaders (Performance ' + p + '%).' + trend, 'Keep reviews coming and post regularly to reach Strong.'];
-    return ['Shows in the top results across most of the area (Performance ' + p + '%).' + trend, 'Keep the profile active to hold the position.'];
-  }
-  function locRow(l) {
-    var w = why(l, mapIdx);
-    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:6px"><span style="font-weight:600">' + l.name + '</span>' + badge(l.hist[mapIdx], 1) + '</div>' + (mapIdx !== NOW && l.hist[NOW] !== l.hist[mapIdx] ? '<div style="font-size:11px;color:' + C.muted + '">Today: ' + LBL[l.hist[NOW]] + '</div>' : '') + '<div style="margin-top:4px;font-size:12px;line-height:1.4;color:' + C.navy + '"><span style="color:' + C.muted + '">Why: </span>' + w[0] + '</div><div style="margin-top:2px;font-size:12px;line-height:1.4;color:' + C.navy + '"><span style="color:' + C.muted + '">How to improve: </span>' + w[1] + '</div>';
-  }
   function showPop(e, html) {
     pop.innerHTML = html; pop.style.display = 'block';
     var r = root.getBoundingClientRect(), x = e.clientX - r.left + 14, y = e.clientY - r.top + 14;
@@ -296,7 +290,7 @@ function drawMap(d3, topojson, us) {
     var ab = NAME_TO_ABBR[d.properties.name], ls = LOCS.filter(function (l) { return l.st === ab; });
     hl.attr('d', path(d)).style('display', null);
     if (hoverAb !== ab) { hoverAb = ab; renderOverview(); }
-    showPop(e, '<div style="' + FJK + 'font-size:13px;font-weight:700;margin-bottom:' + (ls.length ? 6 : 0) + 'px">' + d.properties.name + ' — ' + (ls.length ? ls.length + (ls.length === 1 ? ' location' : ' locations') : '<span style="font-weight:400;color:' + C.muted + '">no locations</span>') + '</div>' + ls.map(locRow).join(''));
+    showPop(e, '<div style="' + FJK + 'font-size:13px;font-weight:700">' + d.properties.name + ' — ' + (ls.length ? ls.length + (ls.length === 1 ? ' location' : ' locations') : '<span style="font-weight:400;color:' + C.muted + '">no locations</span>') + '</div>');
   }).on('mouseleave', function () { hl.style('display', 'none'); pop.style.display = 'none'; hoverAb = null; renderOverview(); })
     .on('click', function (e, d) { var ab = NAME_TO_ABBR[d.properties.name]; pinAb = pinAb === ab ? null : ab; renderOverview(); });
   statePaths.style('cursor', 'pointer');
@@ -367,22 +361,23 @@ function paintLeaderboard() {
     if (!l) return;
     var note = [].filter.call(tr.children[1].querySelectorAll('a'), function (a) { return /in local market/.test(a.textContent); })[0];
     if (note && !note.$m) { note.$m = 1; note.title = 'Open position in the local market over time'; note.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openChart(l, 'market'); }); }
-    if (!l || l.perf[NOW] === l.perf[PERIOD]) return; // no change — no chip
+    var val = tr.children[2].querySelector('span'); if (val) val.textContent = l.perf[rangeB] + '%';
+    if (l.perf[rangeB] === l.perf[rangeA]) return; // no change — no chip
     var cell = tr.children[2], v = cell.querySelector('span');
     var wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;align-items:center;gap:8px';
     cell.insertBefore(wrap, v); wrap.appendChild(v);
     var b = document.createElement('button'); b.type = 'button'; b.dataset.netChip = '';
-    b.setAttribute('aria-label', 'Performance change since ' + STOPS[PERIOD].label + ', open trend');
-    b.title = 'vs ' + STOPS[PERIOD].label + ' · open trend';
+    b.setAttribute('aria-label', 'Performance change since ' + STOPS[rangeA].date + ', open trend');
+    b.title = 'vs ' + STOPS[rangeA].date + ' · open trend';
     b.style.cssText = 'border:0;padding:0;background:transparent;cursor:pointer;border-radius:999px;transition:box-shadow .15s';
-    b.innerHTML = chipHtml(l.perf[NOW] - l.perf[PERIOD]);
+    b.innerHTML = chipHtml(l.perf[rangeB] - l.perf[rangeA]);
     b.onmouseenter = function () { b.style.boxShadow = '0 0 0 1.2px rgba(7,44,74,0.25)'; };
     b.onmouseleave = function () { b.style.boxShadow = 'none'; };
     b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); openChart(l); };
     wrap.appendChild(b);
     if (!first) first = { b: b, l: l };
   });
-  if (first) pinTip(first.b, first.l);
+  if (first) pinTip(first.b, first.l); else if (pin) { pin.style.display = 'none'; pin.$b = null; }
 }
 
 // Pre-opened hint on the first Performance chip of the leaderboard (promo example): shows without hover
@@ -397,7 +392,7 @@ function pinTip(b, l) {
     document.body.appendChild(pin);
     window.addEventListener('resize', function () { if (pin.$b) placePin(); });
   }
-  pin.$b = b;
+  pin.$b = b; pin.style.display = '';
   pin.querySelector('[data-s]').textContent = 'Click the change to see ' + l.name + '\'s Performance over time, its status history and position in the local market.';
   pin.querySelector('[data-open]').onclick = function (e) { e.stopPropagation(); openChart(l); };
   if (b.animate) b.animate([{ boxShadow: '0 0 0 0 rgba(0,94,157,0.45)' }, { boxShadow: '0 0 0 8px rgba(0,94,157,0)' }], { duration: 1600, iterations: Infinity });
@@ -541,7 +536,7 @@ function renderM() {
     });
   });
 }
-function renderAll() { rangeA = 0; rangeB = NOW; mapIdx = NOW; renderPeriod(); renderCards(); renderSC(); renderTimeline(); paintMap(); paintLeaderboard(); }
+function renderAll() { rangeA = 0; rangeB = NOW; mapIdx = NOW; syncPeriod(); renderPeriod(); renderCards(); renderSC(); renderTimeline(); paintMap(); paintLeaderboard(); }
 var src = document.getElementById('network-data');
 if (src) { setData(JSON.parse(src.textContent)); renderAll(); }
 window.SharkNetwork = { setData: function (d) { setData(d); renderAll(); } };

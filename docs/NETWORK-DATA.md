@@ -24,6 +24,10 @@ All Locations builds Status changes, the map timeline, map colours and the leade
 
 ## Map timeline period
 
+The timeline is the page's only date widget («Compare with» was removed): the status cards (count at the
+end point, change vs the start point), the leaderboard Performance value and change chip, and the trend
+modal's default period all follow the selected range.
+
 The timeline has two draggable points — the start and the end of the compared period (any stop to any stop;
 with weekly stops the step is one week). Drag a point, click the track (the nearer point jumps there), click a caption,
 or focus a point and use the arrow keys. The chips show how many locations improved / declined from start to end;
